@@ -128,6 +128,12 @@ textarea { resize: vertical; }
 .checkbox-label input { width: auto; min-height: 0; margin: 0; accent-color: var(--red); }
 .form-actions { display: flex; align-items: center; gap: 10px; }
 
+/* Location Picker Component */
+.location-picker-group { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.search-panel .location-picker-group { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.search-panel .location-picker-group label { color: #fff; }
+.search-form { display: grid; grid-template-columns: 140px 1fr auto; align-items: end; gap: 14px; }
+
 /* Dashboard and content */
 .hero-panel { margin-bottom: 22px; padding: 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; color: #fff; background: #9d1433; border-radius: var(--radius); }
 .hero-panel .eyebrow { color: #ffd9e1; }
@@ -250,6 +256,7 @@ td small { margin-top: 3px; display: block; color: var(--muted); }
     .content-card { padding: 20px 17px; }
     .stat-grid, .form-grid { grid-template-columns: 1fr; }
     .inventory-grid { grid-template-columns: 1fr; }
+    .location-picker-group { grid-template-columns: 1fr; }
     .form-wide { grid-column: auto; }
     .search-form { grid-template-columns: 1fr; }
     .detail-list div { grid-template-columns: 1fr; gap: 3px; }

@@ -15,7 +15,9 @@ $values = [
     'email' => strtolower(trim((string) ($_POST['email'] ?? ''))),
     'role' => (string) ($_POST['role'] ?? 'seeker'),
     'blood_group' => (string) ($_POST['blood_group'] ?? ''),
-    'location' => trim((string) ($_POST['location'] ?? '')),
+    'division' => trim((string) ($_POST['division'] ?? '')),
+    'district' => trim((string) ($_POST['district'] ?? '')),
+    'upazila' => trim((string) ($_POST['upazila'] ?? '')),
     'phone' => trim((string) ($_POST['phone'] ?? '')),
 ];
 
@@ -30,7 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!filter_var($values['email'], FILTER_VALIDATE_EMAIL)) $errors[] = 'Enter a valid email address.';
     if (!in_array($values['role'], ['donor', 'seeker'], true)) $errors[] = 'Choose Donor or Blood Seeker.';
     if ($values['role'] === 'donor' && !in_array($values['blood_group'], valid_blood_groups(), true)) $errors[] = 'Choose your blood group.';
-    if ($values['location'] === '' || strlen($values['location']) > 120) $errors[] = 'Enter a valid location.';
+    if (!validate_location_hierarchy($values['division'], $values['district'], $values['upazila'])) {
+        $errors[] = 'Select a valid Division, District, and Upazila.';
+    }
     if (!preg_match('/^[0-9+() -]{7,20}$/', $values['phone'])) $errors[] = 'Enter a valid phone number.';
     if (strlen($password) < 6) $errors[] = 'Password must contain at least 6 characters.';
     if ($password !== $passwordConfirmation) $errors[] = 'Passwords do not match.';
@@ -42,13 +46,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'An account with this email already exists.';
         } else {
             $bloodGroup = $values['blood_group'] !== '' ? $values['blood_group'] : null;
+            $location = format_location_string($values['upazila'], $values['district'], $values['division']);
             $insert = db()->prepare(
                 'INSERT INTO users (full_name, email, password_hash, role, blood_group, location, phone)
                  VALUES (?, ?, ?, ?, ?, ?, ?)'
             );
             $insert->execute([
                 $values['full_name'], $values['email'], password_hash($password, PASSWORD_DEFAULT),
-                $values['role'], $bloodGroup, $values['location'], $values['phone'],
+                $values['role'], $bloodGroup, $location, $values['phone'],
             ]);
             flash('success', 'Account created successfully. You can now sign in.');
             redirect('login.php');
@@ -86,9 +91,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label><span>Phone number</span><input type="tel" name="phone" value="<?= e($values['phone']) ?>" placeholder="01XXXXXXXXX" required></label>
             <label><span>Account type</span><select name="role" data-role-select><option value="seeker" <?= $values['role'] === 'seeker' ? 'selected' : '' ?>>Blood Seeker</option><option value="donor" <?= $values['role'] === 'donor' ? 'selected' : '' ?>>Donor</option></select></label>
             <label data-blood-group-field><span>Blood group</span><select name="blood_group"><option value="">Select blood group</option><?php foreach (valid_blood_groups() as $group): ?><option value="<?= e($group) ?>" <?= $values['blood_group'] === $group ? 'selected' : '' ?>><?= e($group) ?></option><?php endforeach; ?></select></label>
-            <label class="form-wide"><span>Location</span><input type="text" name="location" list="registration-locations" maxlength="120" value="<?= e($values['location']) ?>" placeholder="Start typing a location" autocomplete="off" required><?php render_location_datalist('registration-locations'); ?></label>
+
+            <!-- Bangladesh Dependent Location Selection (Division -> District -> Upazila) -->
+            <?php render_location_dropdowns('', null, true, [
+                'division' => $values['division'],
+                'district' => $values['district'],
+                'upazila' => $values['upazila'],
+            ]); ?>
+
             <label><span>Strong password</span><input type="password" name="password" autocomplete="new-password" placeholder="Example: Blood@123" minlength="6" required><small>8+ characters with uppercase, lowercase, number and symbol.</small></label>
             <label><span>Confirm password</span><input type="password" name="password_confirmation" autocomplete="new-password" placeholder="Repeat your password" minlength="6" required></label>
+
             <div class="form-wide"><button class="button button-primary button-full" type="submit" <?= !$ready ? 'disabled' : '' ?>>Create Account</button></div>
         </form>
         <p class="auth-switch">Already have an account? <a href="login.php">Sign in</a></p>

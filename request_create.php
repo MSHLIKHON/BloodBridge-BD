@@ -6,9 +6,13 @@ require_once __DIR__ . '/includes/locations.php';
 require_role(['seeker', 'admin']);
 
 $errors = [];
+$userLoc = parse_location_string(current_user()['location'] ?? '');
+
 $values = [
     'blood_group' => $_POST['blood_group'] ?? 'B+',
-    'location' => $_POST['location'] ?? (current_user()['location'] ?? ''),
+    'division' => trim((string) ($_POST['division'] ?? $userLoc['division'])),
+    'district' => trim((string) ($_POST['district'] ?? $userLoc['district'])),
+    'upazila' => trim((string) ($_POST['upazila'] ?? $userLoc['upazila'])),
     'units' => $_POST['units'] ?? '1',
     'urgency' => $_POST['urgency'] ?? 'Urgent',
     'source_type' => $_POST['source_type'] ?? 'Donor',
@@ -19,7 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf();
 
     $bloodGroup = (string) $values['blood_group'];
-    $location = trim((string) $values['location']);
+    $division = (string) $values['division'];
+    $district = (string) $values['district'];
+    $upazila = (string) $values['upazila'];
     $units = filter_var($values['units'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 10]]);
     $urgency = (string) $values['urgency'];
     $sourceType = (string) $values['source_type'];
@@ -28,8 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!in_array($bloodGroup, valid_blood_groups(), true)) {
         $errors[] = 'Choose a valid blood group.';
     }
-    if ($location === '' || strlen($location) > 120) {
-        $errors[] = 'Enter a location within 120 characters.';
+    if (!validate_location_hierarchy($division, $district, $upazila)) {
+        $errors[] = 'Select a valid Division, District, and Upazila.';
     }
     if ($units === false || $units === null) {
         $errors[] = 'Units must be between 1 and 10.';
@@ -45,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$errors) {
+        $location = format_location_string($upazila, $district, $division);
         $statement = db()->prepare(
             'INSERT INTO blood_requests (seeker_id, blood_group, location, units, urgency, source_type, note)
              VALUES (?, ?, ?, ?, ?, ?, ?)'
@@ -79,12 +86,20 @@ require __DIR__ . '/includes/header.php';
     <form method="post" class="form-grid">
         <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
         <label><span>Blood group</span><select name="blood_group" required><?php foreach (valid_blood_groups() as $group): ?><option value="<?= e($group) ?>" <?= $values['blood_group'] === $group ? 'selected' : '' ?>><?= e($group) ?></option><?php endforeach; ?></select></label>
-        <label><span>Location</span><input type="text" name="location" list="request-locations" maxlength="120" value="<?= e((string) $values['location']) ?>" placeholder="Start typing a location" autocomplete="off" required><?php render_location_datalist('request-locations'); ?></label>
         <label><span>Units needed</span><input type="number" name="units" min="1" max="10" value="<?= e((string) $values['units']) ?>" required></label>
+        
+        <!-- Bangladesh Dependent Location Selection -->
+        <?php render_location_dropdowns('', null, true, [
+            'division' => $values['division'],
+            'district' => $values['district'],
+            'upazila' => $values['upazila'],
+        ]); ?>
+
         <label><span>Urgency</span><select name="urgency"><option <?= $values['urgency'] === 'Normal' ? 'selected' : '' ?>>Normal</option><option <?= $values['urgency'] === 'Urgent' ? 'selected' : '' ?>>Urgent</option><option <?= $values['urgency'] === 'Emergency' ? 'selected' : '' ?>>Emergency</option></select></label>
         <label><span>Blood source</span><select name="source_type"><option <?= $values['source_type'] === 'Donor' ? 'selected' : '' ?>>Donor</option><option <?= $values['source_type'] === 'Blood Bank' ? 'selected' : '' ?>>Blood Bank</option></select></label>
         <label class="form-wide"><span>Patient note (optional)</span><textarea name="note" maxlength="500" rows="4" placeholder="Hospital name, contact person or special instruction"><?= e((string) $values['note']) ?></textarea></label>
         <div class="form-wide form-actions"><button class="button button-primary" type="submit">Create Request</button><a class="button button-secondary" href="requests.php">Cancel</a></div>
     </form>
 </section>
+<script src="assets/js/app.js"></script>
 <?php require __DIR__ . '/includes/footer.php'; ?>
