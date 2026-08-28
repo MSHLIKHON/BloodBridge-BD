@@ -77,9 +77,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!in_array($status, $allowed, true)) {
             $errors[] = 'Choose a valid status.';
         } else {
-            $acceptedBy = in_array($status, ['Accepted', 'Completed'], true) ? (int) $user['id'] : null;
+            $acceptedBy = in_array($status, ['Accepted', 'Completed'], true)
+                ? ((int) ($request['accepted_by'] ?: $user['id']))
+                : null;
             $update = db()->prepare('UPDATE blood_requests SET status = ?, accepted_by = ? WHERE id = ?');
             $update->execute([$status, $acceptedBy, $id]);
+
+            // If request is marked Completed, record in donation_history if applicable
+            if ($status === 'Completed') {
+                $targetDonorId = $acceptedBy ?: ($user['role'] === 'donor' ? (int) $user['id'] : null);
+                if ($targetDonorId) {
+                    $chkHist = db()->prepare('SELECT COUNT(*) FROM donation_history WHERE request_id = ?');
+                    $chkHist->execute([$id]);
+                    if ((int) $chkHist->fetchColumn() === 0) {
+                        $unitsDonated = (int) $request['units'];
+                        $insHist = db()->prepare(
+                            'INSERT INTO donation_history (request_id, donor_id, blood_group, units, donation_date, notes)
+                             VALUES (?, ?, ?, ?, CURDATE(), ?)'
+                        );
+                        $insHist->execute([
+                            $id,
+                            $targetDonorId,
+                            $request['blood_group'],
+                            $unitsDonated,
+                            'Fulfilled request #' . $id . ' at ' . $request['location']
+                        ]);
+
+                        // Update donor stats
+                        $updDonor = db()->prepare(
+                            'UPDATE users SET total_donations = total_donations + ?, last_donation_date = CURDATE(), profile_updated_at = NOW() WHERE id = ?'
+                        );
+                        $updDonor->execute([$unitsDonated, $targetDonorId]);
+                    }
+                }
+            }
+
             flash('success', 'Request status updated to ' . $status . '.');
             redirect('request_edit.php?id=' . $id);
         }

@@ -69,6 +69,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $effectiveStatus = donor_effective_status($donor);
 $eligibleDate = next_eligible_date($donor['last_donation_date']);
+
+// Fetch recent donation history records for this donor
+$histStmt = db()->prepare(
+    'SELECT dh.*, h.name AS hospital_name, h.location AS hospital_location
+     FROM donation_history dh
+     LEFT JOIN hospitals h ON h.id = dh.hospital_id
+     WHERE dh.donor_id = ?
+     ORDER BY dh.donation_date DESC, dh.id DESC LIMIT 5'
+);
+$histStmt->execute([$userId]);
+$recentDonations = $histStmt->fetchAll();
+
 $pageTitle = 'My Donor Profile';
 require __DIR__ . '/includes/header.php';
 ?>
@@ -108,5 +120,34 @@ require __DIR__ . '/includes/header.php';
         <label class="form-wide"><span>Current medications (if any)</span><textarea name="current_medications" rows="3" maxlength="1000" placeholder="Medicine name or write None"><?= e($donor['current_medications']) ?></textarea></label>
         <div class="form-wide form-actions"><button class="button button-primary" type="submit">Save Donor Profile</button></div>
     </form>
+</section>
+
+<section class="content-card top-gap">
+    <div class="section-heading">
+        <div><span class="eyebrow">Milestones</span><h2>My Donation History</h2></div>
+        <a href="donation_history.php">View all</a>
+    </div>
+    <?php if (!$recentDonations): ?>
+        <div class="empty-state">No donation logs recorded yet.</div>
+    <?php else: ?>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Date</th><th>Blood Group</th><th>Units</th><th>Facility</th><th>Notes</th></tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($recentDonations as $d): ?>
+                        <tr>
+                            <td><strong><?= e(date('d M Y', strtotime($d['donation_date']))) ?></strong></td>
+                            <td><strong class="blood-group"><?= e($d['blood_group']) ?></strong></td>
+                            <td><?= (int) $d['units'] ?> unit(s)</td>
+                            <td><?= e($d['hospital_name'] ?: 'Direct donation') ?></td>
+                            <td><?= e($d['notes'] ?: '&mdash;') ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
 </section>
 <?php require __DIR__ . '/includes/footer.php'; ?>
