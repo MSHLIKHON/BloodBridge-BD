@@ -193,6 +193,35 @@ td small { margin-top: 3px; display: block; color: var(--muted); }
 .blood-icon.bank { background: var(--blue); }
 .count-pill { padding: 5px 9px; color: #475467; background: #f1f3f6; border-radius: 999px; font-size: 12px; font-weight: 600; }
 
+/* Hospital Inventory & Banners */
+.hospital-info-banner { margin-bottom: 22px; padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; background: #fff; border: 1px solid var(--border); border-left: 4px solid var(--blue); border-radius: var(--radius); }
+.hospital-info-banner strong { display: block; font-size: 17px; color: var(--text); }
+.hospital-info-banner span { color: var(--muted); font-size: 13px; }
+.hospital-switcher label { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+.hospital-switcher select { min-height: 40px; padding: 6px 10px; width: auto; font-size: 14px; }
+.banner-stats { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.stat-badge { padding: 6px 12px; background: #f0f4f9; border-radius: 8px; font-size: 13px; color: #344054; }
+.stat-badge.badge-warning { background: #fff4e5; color: #b54708; font-weight: 600; }
+.stat-badge.badge-success { background: #ecfdf3; color: #027a48; font-weight: 600; }
+
+.inventory-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
+.inventory-card { padding: 20px; background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; display: grid; gap: 12px; transition: transform .15s ease, box-shadow .15s ease; }
+.inventory-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(15,23,42,.06); }
+.inventory-card.is-low { background: #fff8f8; border-color: #fecdca; }
+.inv-header { display: flex; align-items: center; justify-content: space-between; }
+.blood-icon.bank-low { background: #d92d20; }
+.inv-count strong { font-size: 28px; font-weight: 700; color: var(--text); display: block; line-height: 1; }
+.inv-count span { font-size: 13px; color: var(--muted); }
+.inv-actions { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: center; margin-top: 4px; }
+.quick-adjust-form { display: flex; gap: 4px; }
+.btn-adjust { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 6px; border: 1px solid var(--border); background: #fff; color: var(--text); font-size: 16px; font-weight: 700; cursor: pointer; transition: all .15s; }
+.btn-adjust:hover:not(:disabled) { background: #e2e8f0; }
+.btn-adjust:disabled { opacity: 0.4; cursor: not-allowed; }
+.direct-set-form { display: flex; gap: 6px; align-items: center; }
+.direct-set-form input { min-height: 34px; height: 34px; padding: 4px 8px; font-size: 14px; text-align: center; }
+.button-small { min-height: 34px; height: 34px; padding: 0 12px; font-size: 13px; }
+.inv-updated { font-size: 11px; color: #94a3b8; }
+
 @media (max-width: 960px) {
     .nav { gap: 1px; }
     .nav a { padding-inline: 8px; }
@@ -200,6 +229,7 @@ td small { margin-top: 3px; display: block; color: var(--muted); }
     .auth-message { padding: 38px; }
     .stat-grid { grid-template-columns: repeat(2, 1fr); }
     .detail-grid, .result-grid { grid-template-columns: 1fr; }
+    .inventory-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 680px) {
@@ -219,6 +249,7 @@ td small { margin-top: 3px; display: block; color: var(--muted); }
     .hero-panel { padding: 25px 21px; align-items: flex-start; flex-direction: column; }
     .content-card { padding: 20px 17px; }
     .stat-grid, .form-grid { grid-template-columns: 1fr; }
+    .inventory-grid { grid-template-columns: 1fr; }
     .form-wide { grid-column: auto; }
     .search-form { grid-template-columns: 1fr; }
     .detail-list div { grid-template-columns: 1fr; gap: 3px; }
