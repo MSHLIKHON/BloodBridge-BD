@@ -31,6 +31,7 @@ $currentPage = basename((string) ($_SERVER['PHP_SELF'] ?? ''));
                 <a class="<?= in_array($currentPage, ['inventory.php'], true) ? 'active' : '' ?>" href="inventory.php">Inventory</a>
                 <a class="<?= in_array($currentPage, ['donors.php', 'donor_details.php'], true) ? 'active' : '' ?>" href="donors.php">Donors</a>
                 <a class="<?= in_array($currentPage, ['donation_history.php'], true) ? 'active' : '' ?>" href="donation_history.php">History</a>
+                <a class="<?= in_array($currentPage, ['reports.php'], true) ? 'active' : '' ?>" href="reports.php">Reports</a>
             <?php elseif ($user['role'] === 'donor'): ?>
                 <a class="<?= $currentPage === 'donor_profile.php' ? 'active' : '' ?>" href="donor_profile.php">My Profile</a>
                 <a class="<?= in_array($currentPage, ['donation_history.php'], true) ? 'active' : '' ?>" href="donation_history.php">History</a>
