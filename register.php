@@ -87,8 +87,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label><span>Account type</span><select name="role" data-role-select><option value="seeker" <?= $values['role'] === 'seeker' ? 'selected' : '' ?>>Blood Seeker</option><option value="donor" <?= $values['role'] === 'donor' ? 'selected' : '' ?>>Donor</option></select></label>
             <label data-blood-group-field><span>Blood group</span><select name="blood_group"><option value="">Select blood group</option><?php foreach (valid_blood_groups() as $group): ?><option value="<?= e($group) ?>" <?= $values['blood_group'] === $group ? 'selected' : '' ?>><?= e($group) ?></option><?php endforeach; ?></select></label>
             <label class="form-wide"><span>Location</span><input type="text" name="location" list="registration-locations" maxlength="120" value="<?= e($values['location']) ?>" placeholder="Start typing a location" autocomplete="off" required><?php render_location_datalist('registration-locations'); ?></label>
-            <label><span>Password</span><input type="password" name="password" autocomplete="new-password" minlength="6" required></label>
-            <label><span>Confirm password</span><input type="password" name="password_confirmation" autocomplete="new-password" minlength="6" required></label>
+            <label><span>Strong password</span><input type="password" name="password" autocomplete="new-password" placeholder="Example: Blood@123" minlength="6" required><small>8+ characters with uppercase, lowercase, number and symbol.</small></label>
+            <label><span>Confirm password</span><input type="password" name="password_confirmation" autocomplete="new-password" placeholder="Repeat your password" minlength="6" required></label>
             <div class="form-wide"><button class="button button-primary button-full" type="submit" <?= !$ready ? 'disabled' : '' ?>>Create Account</button></div>
         </form>
         <p class="auth-switch">Already have an account? <a href="login.php">Sign in</a></p>
