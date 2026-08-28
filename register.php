@@ -99,8 +99,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'upazila' => $values['upazila'],
             ]); ?>
 
-            <label><span>Strong password</span><input type="password" name="password" autocomplete="new-password" placeholder="Example: Blood@123" minlength="6" required><small>8+ characters with uppercase, lowercase, number and symbol.</small></label>
-            <label><span>Confirm password</span><input type="password" name="password_confirmation" autocomplete="new-password" placeholder="Repeat your password" minlength="6" required></label>
+            <!-- Aligned Password & Confirm Password Fields -->
+            <label>
+                <span>Strong password</span>
+                <input type="password" name="password" autocomplete="new-password" placeholder="Example: Blood@123" minlength="6" required>
+                <small>8+ characters with uppercase, lowercase, number and symbol.</small>
+            </label>
+            <label>
+                <span>Confirm password</span>
+                <input type="password" name="password_confirmation" autocomplete="new-password" placeholder="Repeat your password" minlength="6" required>
+                <small>Re-enter the identical password to confirm.</small>
+            </label>
 
             <div class="form-wide"><button class="button button-primary button-full" type="submit" <?= !$ready ? 'disabled' : '' ?>>Create Account</button></div>
         </form>
