@@ -7,17 +7,19 @@ BloodBridge BD is a web-based blood donation and hospital blood-bank management 
 
 ## Main features
 
-- Registration and secure login
+- Registration and secure login with CSRF protection and password requirements
 - Four user roles: Blood Seeker, Donor, Hospital Staff and Admin
+- Role-customized dashboard with live system KPIs and quick actions
 - Blood-request create, read, update and delete operations
 - Donor search by blood group and Bangladesh location
 - Hospital blood-bank stock search
 - Bangladesh location autocomplete
-- Donor availability and last-donation record
-- Private donor medical information
-- Automatic next eligible donation date after 120 days
-- Hospital/Admin donor screening verification
-- Responsive interface for desktop and mobile
+- Hospital blood inventory management (`inventory.php`) with low-stock tracking
+- Donor availability, health profile, and 120-day next eligible date calculation
+- Donation history logging and automatic audit tracking (`donation_history.php`)
+- Hospital and Admin donor screening verification
+- Summary reports and distribution analytics (`reports.php`)
+- Privacy-aware role-based access control and responsive interface
 
 ## Technology
 
@@ -82,16 +84,22 @@ BloodBridge_BD/
 ├── database.sql            Database schema
 ├── setup.php               Local database setup
 ├── login.php               User authentication
-├── dashboard.php           Role-based dashboard
-├── requests.php            Blood request list
+├── register.php            Seeker & donor registration
+├── dashboard.php           Role-customized dashboard
+├── requests.php            Blood request list and filters
+├── request_create.php      Create blood request
+├── request_edit.php        Request detail, update and fulfillment
 ├── search.php              Donor and blood-bank search
-├── donor_profile.php       Donor health profile
+├── inventory.php           Hospital blood inventory management
+├── donation_history.php    Donation logs and audit trail
+├── reports.php             Summary reports and stock analytics
+├── donor_profile.php       Donor health profile and history
 └── donor_details.php       Privacy-aware donor information
 ```
 
 ## Screenshots
 
-Add real screenshots of the running project inside `docs/screenshots/`. Recommended screenshots are login, dashboard, blood search, request form and donor profile. Do not include real patient or donor data.
+Add real screenshots of the running project inside `docs/screenshots/`. Recommended screenshots are login, dashboard, blood search, request form, inventory management and donor profile. Do not include real patient or donor data.
 
 ## GitHub workflow
 
@@ -101,11 +109,10 @@ Each team member should use their own GitHub account and make genuine contributi
 
 This repository is an academic prototype. Do not upload real passwords, patient records, donor medical data or production database backups. Rename or remove `setup.php` before a real deployment.
 
-## Future improvements
+## Future improvements (100% Phase)
 
-- Hospital inventory management
-- Blood reservation workflow
-- Email or SMS notifications
-- Verified hospital onboarding
-- Emergency request prioritization
-- Production deployment and security review
+- SMS gateway integration (e.g. Twilio / Greenweb SMS)
+- Live map view and GPS radius search
+- Automated email notification dispatcher
+- Advanced PDF report generation
+- Production deployment and security hardening
