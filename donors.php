@@ -7,7 +7,7 @@ require_role(['admin', 'hospital']);
 $donors = db()->query(
     "SELECT id, full_name, blood_group, location, last_donation_date, is_available,
             screening_status, verified_by_hospital
-     FROM users WHERE role = 'donor' ORDER BY full_name"
+     FROM users WHERE role = 'donor' AND account_status = 'Active' ORDER BY full_name"
 )->fetchAll();
 
 $pageTitle = 'Donors';
