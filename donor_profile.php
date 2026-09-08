@@ -22,7 +22,6 @@ $errors = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf();
     $lastDonationDate = trim((string) ($_POST['last_donation_date'] ?? ''));
-    $totalDonations = filter_input(INPUT_POST, 'total_donations', FILTER_VALIDATE_INT, ['options' => ['min_range' => 0, 'max_range' => 500]]);
     $isAvailable = isset($_POST['is_available']) ? 1 : 0;
     $hasCondition = (string) ($_POST['has_medical_condition'] ?? '0') === '1' ? 1 : 0;
     $conditions = trim((string) ($_POST['medical_conditions'] ?? ''));
@@ -34,21 +33,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'Enter a valid last donation date. Future dates are not allowed.';
         }
     }
-    if ($totalDonations === false || $totalDonations === null) $errors[] = 'Total donations must be between 0 and 500.';
     if ($hasCondition && $conditions === '') $errors[] = 'Briefly describe the medical condition.';
     if (strlen($conditions) > 1000) $errors[] = 'Medical condition details must be within 1000 characters.';
     if (strlen($medications) > 1000) $errors[] = 'Medication details must be within 1000 characters.';
 
     if (!$errors) {
         $update = db()->prepare(
-            "UPDATE users SET last_donation_date = ?, total_donations = ?, is_available = ?,
+            "UPDATE users SET last_donation_date = ?, is_available = ?,
              has_medical_condition = ?, medical_conditions = ?, current_medications = ?,
              screening_status = 'Pending', verified_by_hospital = 0, profile_updated_at = NOW()
              WHERE id = ?"
         );
         $update->execute([
             $lastDonationDate !== '' ? $lastDonationDate : null,
-            $totalDonations, $isAvailable, $hasCondition,
+            $isAvailable, $hasCondition,
             $hasCondition ? $conditions : null,
             $medications !== '' ? $medications : null,
             $userId,
@@ -59,7 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $donor = array_merge($donor, [
         'last_donation_date' => $lastDonationDate,
-        'total_donations' => $totalDonations === false ? 0 : $totalDonations,
         'is_available' => $isAvailable,
         'has_medical_condition' => $hasCondition,
         'medical_conditions' => $conditions,
@@ -90,7 +87,7 @@ require __DIR__ . '/includes/header.php';
     </section>
     <section class="content-card privacy-card">
         <span class="eyebrow">Privacy</span><h2>Your medical details are protected</h2>
-        <p>Blood seekers can only see your eligibility, verification and donation history. Medical conditions and medications are visible only to you, Hospital Staff and Admin.</p>
+        <p>Medical details are visible to you, Hospital Staff, Admin and the blood seeker only after you accept that seeker's request.</p>
         <p class="muted">A hospital must complete the final health screening before every donation.</p>
     </section>
 </div>
@@ -101,7 +98,7 @@ require __DIR__ . '/includes/header.php';
     <form method="post" class="form-grid" data-health-form>
         <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
         <label><span>Last donation date</span><input type="date" name="last_donation_date" max="<?= e(date('Y-m-d')) ?>" value="<?= e($donor['last_donation_date']) ?>"></label>
-        <label><span>Total donations</span><input type="number" name="total_donations" min="0" max="500" value="<?= (int) $donor['total_donations'] ?>" required></label>
+        <label><span>Verified total donations</span><input type="number" value="<?= (int) $donor['total_donations'] ?>" readonly><small>Updated automatically after a completed donation.</small></label>
         <label><span>Any current illness or medical condition?</span><select name="has_medical_condition" data-condition-select><option value="0" <?= !$donor['has_medical_condition'] ? 'selected' : '' ?>>No</option><option value="1" <?= $donor['has_medical_condition'] ? 'selected' : '' ?>>Yes</option></select></label>
         <label class="checkbox-label"><input type="checkbox" name="is_available" value="1" <?= $donor['is_available'] ? 'checked' : '' ?>><span>I am currently available for donation requests</span></label>
         <label class="form-wide" data-condition-details><span>Medical condition details</span><textarea name="medical_conditions" rows="3" maxlength="1000" placeholder="Give a short description for authorized screening staff"><?= e($donor['medical_conditions']) ?></textarea></label>
