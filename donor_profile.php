@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+// Donor Profile
 require_once __DIR__ . '/includes/auth.php';
 require_role(['donor']);
 
