@@ -74,12 +74,15 @@ if ($role === 'donor') {
     $countRequest->execute([$userId]);
     $completed = $pdo->prepare("SELECT COUNT(*) FROM blood_requests WHERE seeker_id = ? AND status = 'Completed'");
     $completed->execute([$userId]);
+    $urgent = $pdo->prepare("SELECT COUNT(*) FROM blood_requests WHERE seeker_id = ? AND urgency = 'Emergency' AND status IN ('Pending', 'Accepted')");
+    $urgent->execute([$userId]);
     $reservations = $pdo->prepare("SELECT COUNT(*) FROM blood_reservations WHERE seeker_id = ? AND status IN ('Pending', 'Approved')");
     $reservations->execute([$userId]);
     $available = (int) $pdo->query('SELECT COALESCE(SUM(GREATEST(units - reserved_units, 0)), 0) FROM blood_inventory')->fetchColumn();
 
     $stats = [
         ['label' => 'Active requests', 'value' => (int) $countRequest->fetchColumn(), 'note' => 'Pending or accepted'],
+        ['label' => 'Emergency requests', 'value' => (int) $urgent->fetchColumn(), 'note' => 'Active high-priority cases'],
         ['label' => 'Reservations', 'value' => (int) $reservations->fetchColumn(), 'note' => 'Waiting or approved'],
         ['label' => 'Completed requests', 'value' => (int) $completed->fetchColumn(), 'note' => 'Successfully closed cases'],
         ['label' => 'Available bank units', 'value' => $available, 'note' => 'Live unreserved stock'],
