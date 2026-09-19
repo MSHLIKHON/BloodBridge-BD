@@ -1,0 +1,703 @@
+{
+  "runtime": "PHP 8.3.32 WebAssembly",
+  "date": "2026-09-19T12:42:18.653Z",
+  "unit": [
+    {
+      "test": "Eight blood groups",
+      "status": "PASS"
+    },
+    {
+      "test": "Blood groups unique",
+      "status": "PASS"
+    },
+    {
+      "test": "Bangladesh local phone",
+      "status": "PASS"
+    },
+    {
+      "test": "Bangladesh international phone",
+      "status": "PASS"
+    },
+    {
+      "test": "Phone leading zero normalization",
+      "status": "PASS"
+    },
+    {
+      "test": "Invalid phone prefix rejected",
+      "status": "PASS"
+    },
+    {
+      "test": "Short phone rejected",
+      "status": "PASS"
+    },
+    {
+      "test": "Non-numeric phone rejected",
+      "status": "PASS"
+    },
+    {
+      "test": "Strong password accepted",
+      "status": "PASS"
+    },
+    {
+      "test": "Weak password rejected",
+      "status": "PASS"
+    },
+    {
+      "test": "Oversize password rejected",
+      "status": "PASS"
+    },
+    {
+      "test": "Missing uppercase rejected",
+      "status": "PASS"
+    },
+    {
+      "test": "Missing digit rejected",
+      "status": "PASS"
+    },
+    {
+      "test": "Missing symbol rejected",
+      "status": "PASS"
+    },
+    {
+      "test": "HTML escaping",
+      "status": "PASS"
+    },
+    {
+      "test": "Null escaping",
+      "status": "PASS"
+    },
+    {
+      "test": "Valid leap day",
+      "status": "PASS"
+    },
+    {
+      "test": "Invalid leap day rejected",
+      "status": "PASS"
+    },
+    {
+      "test": "Invalid month rejected",
+      "status": "PASS"
+    },
+    {
+      "test": "Future past-date rejected",
+      "status": "PASS"
+    },
+    {
+      "test": "Today allowed",
+      "status": "PASS"
+    },
+    {
+      "test": "Empty past-date rejected",
+      "status": "PASS"
+    },
+    {
+      "test": "Supplied interval policy used",
+      "status": "PASS"
+    },
+    {
+      "test": "Missing donation date not fabricated",
+      "status": "PASS"
+    },
+    {
+      "test": "Malformed donation date handled",
+      "status": "PASS"
+    },
+    {
+      "test": "Screened available donor status",
+      "status": "PASS"
+    },
+    {
+      "test": "Blocked donor not available",
+      "status": "PASS"
+    },
+    {
+      "test": "Disabled donation not available",
+      "status": "PASS"
+    },
+    {
+      "test": "Unavailable donor excluded",
+      "status": "PASS"
+    },
+    {
+      "test": "Pending screening retained",
+      "status": "PASS"
+    },
+    {
+      "test": "Recent donation deferred",
+      "status": "PASS"
+    },
+    {
+      "test": "Permanent screening restriction retained",
+      "status": "PASS"
+    },
+    {
+      "test": "Expiry at boundary rejected",
+      "status": "PASS"
+    },
+    {
+      "test": "Past expiry rejected",
+      "status": "PASS"
+    },
+    {
+      "test": "Future expiry allowed",
+      "status": "PASS"
+    },
+    {
+      "test": "Legacy null expiry allowed",
+      "status": "PASS"
+    },
+    {
+      "test": "Missing upload rejected",
+      "status": "PASS"
+    },
+    {
+      "test": "CSRF token unpredictable-length",
+      "status": "PASS"
+    },
+    {
+      "test": "CSRF token stable in session",
+      "status": "PASS"
+    },
+    {
+      "test": "Eight divisions in offline data",
+      "status": "PASS"
+    },
+    {
+      "test": "64 districts in offline data",
+      "status": "PASS"
+    },
+    {
+      "test": "Original 494 areas plus supplied urban areas retained",
+      "status": "PASS"
+    },
+    {
+      "test": "Known legacy address upgraded without guessing",
+      "status": "PASS"
+    },
+    {
+      "test": "Unknown legacy address preserved",
+      "status": "PASS"
+    },
+    {
+      "test": "Real location hierarchy accepted",
+      "status": "PASS"
+    },
+    {
+      "test": "Unknown division rejected",
+      "status": "PASS"
+    },
+    {
+      "test": "Unknown district rejected",
+      "status": "PASS"
+    },
+    {
+      "test": "Unknown area rejected",
+      "status": "PASS"
+    },
+    {
+      "test": "Other division district rejected",
+      "status": "PASS"
+    }
+  ],
+  "simulation": [
+    {
+      "test": "Create direct donation and consent",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Block second active donation commitment",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Other hospital cannot screen",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Admin cannot clinically screen",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Reject confirmation before screening",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Reject screening without attestation",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Hospital records screening",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Revoke consent prevents completion",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Confirm donation updates stock and history",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Duplicate completion blocked without extra stock",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Health consent does not expose another donor",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Health access denied to seekers",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Health access denied to admin without clinical role",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Health owner has access",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Suspension revokes hospital health access",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Expired bank request releases its reservation",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Expired reservation releases only reserved units",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Expiry is idempotent",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Inconsistent stock expiry rolls back",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Assigned hospital may review prescription",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Other hospital cannot review prescription",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Owner cannot approve own prescription",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Donor cannot read seeker prescription",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Create club awaiting verification",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Unapproved club cannot recruit",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Coordinator cannot approve their club",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Administrator approves club",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Joining needs consent",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Consenting member application saved",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Unrelated user cannot manage members",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Coordinator approves member",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Create future campaign",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Member registers only once",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Non-member cannot register",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Future campaign cannot be completed",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    },
+    {
+      "test": "Leaving removes active campaign registration",
+      "status": "PASS",
+      "environment": "SQLite simulation"
+    }
+  ],
+  "http_security": [
+    {
+      "test": "Anonymous denied: services.php",
+      "status": "PASS"
+    },
+    {
+      "test": "Anonymous denied: health_records.php",
+      "status": "PASS"
+    },
+    {
+      "test": "Anonymous denied: document.php",
+      "status": "PASS"
+    },
+    {
+      "test": "Anonymous denied: request_documents.php",
+      "status": "PASS"
+    },
+    {
+      "test": "Anonymous denied: direct_donations.php",
+      "status": "PASS"
+    },
+    {
+      "test": "Anonymous denied: clubs.php",
+      "status": "PASS"
+    },
+    {
+      "test": "Anonymous denied: reports.php",
+      "status": "PASS"
+    },
+    {
+      "test": "Anonymous denied: settings.php",
+      "status": "PASS"
+    },
+    {
+      "test": "Anonymous denied: stock_settings.php",
+      "status": "PASS"
+    },
+    {
+      "test": "Anonymous denied: hospital_verification.php",
+      "status": "PASS"
+    },
+    {
+      "test": "Anonymous denied: testing.php",
+      "status": "PASS"
+    },
+    {
+      "test": "Anonymous denied: inventory.php",
+      "status": "PASS"
+    },
+    {
+      "test": "Anonymous denied: reservations.php",
+      "status": "PASS"
+    },
+    {
+      "test": "Anonymous denied: dashboard.php",
+      "status": "PASS"
+    },
+    {
+      "test": "CSRF missing rejects POST",
+      "status": "PASS"
+    },
+    {
+      "test": "CSRF incorrect rejects POST",
+      "status": "PASS"
+    },
+    {
+      "test": "CSRF valid accepts POST",
+      "status": "PASS"
+    }
+  ],
+  "not_run": [
+    "Native MySQL/MariaDB fresh setup",
+    "Native legacy migration",
+    "Real concurrent transactions",
+    "XAMPP on Mac/Windows",
+    "Browser visual and end-to-end tests",
+    "OS scheduler while site is idle",
+    "Successful browser file uploads/downloads"
+  ],
+  "syntax": {
+    "files": 60,
+    "status": "PASS",
+    "output": "PHP syntax: 60 files PASS\n",
+    "errors": ""
+  },
+  "matching": [
+    {
+      "test": "Admin cannot express interest",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Hospital cannot act as personal donor",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Owner cannot offer to own request",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Two interested donors leave request pending",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Repeated interest does not duplicate notification",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Another seeker cannot select donor",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Owner selection marks other donor not selected",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Second selection cannot overwrite selected donor",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Selected donor cannot commit to another request",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Receipt blocked before donor reports donation",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Unselected donor cannot confirm",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Donation report blocked before confirmation",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Donor confirms and reports donation",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Donated request cannot silently expire",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Disputed receipt retains donor commitment",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Admin cannot mark personal donation received",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Owner receipt records one donation and received date",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Duplicate receipt blocked",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Decline does not reject whole request",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Withdrawal permits later donor selection",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Not received before donation closes with no history",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Coordinate pair required",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Outside Bangladesh bounds rejected",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Same-point distance is zero",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Nearby point is inside one kilometre",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Distant point is outside one kilometre",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Only eligible consenting nearby donor returned",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Nearby output hides exact coordinate and identity",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Another seeker cannot query request origin",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Unreviewed request cannot search donors",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Revocation removes nearby visibility",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Stale location excluded",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Cross-division address rejected server-side",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Address formats consistently",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Optional district search does not require area",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Donor cannot correct an undisputed report",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Seeker cannot impersonate donor correction",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    },
+    {
+      "test": "Both sides agree no donation: close without history",
+      "status": "PASS",
+      "environment": "SQLite sequential simulation"
+    }
+  ],
+  "frontend_dom": [
+    {
+      "test": "Division populates only its districts",
+      "status": "PASS"
+    },
+    {
+      "test": "District populates its areas",
+      "status": "PASS"
+    },
+    {
+      "test": "Changing division removes old district and area",
+      "status": "PASS"
+    },
+    {
+      "test": "Separate form pickers do not change each other",
+      "status": "PASS"
+    },
+    {
+      "test": "Cleared division clears dependent options",
+      "status": "PASS"
+    },
+    {
+      "test": "No automatic geolocation request",
+      "status": "PASS"
+    },
+    {
+      "test": "Missing map library leaves manual coordinate input usable",
+      "status": "PASS"
+    },
+    {
+      "test": "Clear pin clears both coordinates",
+      "status": "PASS"
+    },
+    {
+      "test": "Denied GPS gives actionable fallback",
+      "status": "PASS"
+    }
+  ],
+  "javascript_syntax": "PASS: app.js, address.js, maps.js",
+  "stylesheet_sha256": "f06e3264e09e26f96072738f017c9ac48a8da337311af4062fd076ee709237db",
+  "stylesheet_unchanged": true,
+  "assertions_passed": 149
+}

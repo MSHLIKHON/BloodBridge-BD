@@ -1,0 +1,44 @@
+name: PHP and database tests
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: qa-only-password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      BLOODBRIDGE_DB_HOST: 127.0.0.1
+      BLOODBRIDGE_DB_PORT: 3306
+      BLOODBRIDGE_DB_USER: root
+      BLOODBRIDGE_DB_PASS: qa-only-password
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install PHP test runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y php-cli php-mysql php-sqlite3 php-mbstring
+      - name: Check PHP syntax
+        run: find . -name '*.php' -not -path './node_modules/*' -print0 | xargs -0 -n1 php -l
+      - name: Unit tests
+        run: php tests/unit.php
+      - name: Sequential workflow simulation
+        run: php tests/workflow.php
+      - name: Donor matching, privacy and address simulation
+        run: php tests/matching.php
+      - name: Native fresh installation and workflow
+        run: php tests/mysql_integration.php
+      - name: Native legacy migration
+        run: php tests/mysql_integration.php legacy

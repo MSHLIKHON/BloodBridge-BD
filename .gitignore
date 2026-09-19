@@ -1,0 +1,23 @@
+# macOS and editor files
+.DS_Store
+.idea/
+.vscode/
+
+# Local configuration and secrets
+config/database.local.php
+.env
+.env.*
+!.env.example
+
+# Runtime files
+*.log
+logs/
+tmp/
+
+# Local database backups
+*.sql.gz
+*.dump
+
+# Dependencies, if added later
+vendor/
+node_modules/
