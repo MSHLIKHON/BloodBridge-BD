@@ -51,6 +51,7 @@ function bloodbridge_unit_tests(): array
     $check('Missing upload rejected',function():bool { try { receive_private_upload('missing_test_field');return false; }catch(DomainException $e){return true;} });
     $check('CSRF token unpredictable-length',fn()=>strlen(csrf_token())===64 && ctype_xdigit(csrf_token()));
     $check('CSRF token stable in session',fn()=>csrf_token()===csrf_token());
+    $check('Session is isolated by checkout and database',fn()=>session_name()==='BBBD_'.substr(hash('sha256',dirname(__DIR__).'/config'."\0".DB_NAME),0,12));
     $hierarchy=bangladesh_location_hierarchy();
     $check('Eight divisions in offline data',fn()=>count($hierarchy)===8);
     $districts=0;$areas=0;foreach($hierarchy as $division=>$ds){$districts+=count($ds);foreach($ds as $us)$areas+=count($us);}

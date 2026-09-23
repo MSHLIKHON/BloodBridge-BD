@@ -16,7 +16,7 @@ $liveVersion = $user && !empty($enableLiveUpdates) ? live_data_version((int) $us
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= e($pageTitle) ?> | <?= APP_NAME ?></title>
-    <link rel="stylesheet" href="assets/css/style.css?v=70">
+    <link rel="stylesheet" href="assets/css/style.css?v=72">
     <?php if(!empty($enableMap)): ?><link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css"><?php endif; ?>
 </head>
 <body<?= $liveVersion !== '' ? ' data-live-page data-live-version="' . e($liveVersion) . '"' : '' ?>>

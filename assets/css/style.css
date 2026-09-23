@@ -149,6 +149,7 @@ button, .button { cursor: pointer; }
 .password-field { grid-template-rows: auto 45px minmax(34px, auto); align-content: start; }
 .password-field small { color: var(--muted); font-size: 12px; font-weight: 400; line-height: 1.4; }
 label { display: grid; gap: 7px; color: #344054; font-size: 14px; font-weight: 600; }
+[hidden] { display: none !important; }
 input, select, textarea { width: 100%; min-height: 45px; padding: 10px 12px; color: var(--text); background: #fff; border: 1px solid #bfc8d5; border-radius: 8px; outline: none; transition: border-color .15s ease, box-shadow .15s ease; }
 input::placeholder, textarea::placeholder { color: #7b8798; }
 input:focus, select:focus, textarea:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(179,19,53,.1); }

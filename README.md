@@ -82,7 +82,26 @@ php tests/mysql_integration.php legacy
 
 The first three do not modify your application database. The workflow suite uses **in-memory SQLite with a documented MySQL-syntax adapter**, so it tests sequential business rules only. The native suite creates a randomly named `bb_qa_...` database with configured MySQL credentials, refuses to overwrite an existing database, then removes only the test database. The MySQL account needs create/drop privileges for that suite. It never selects the normal project database for mutations.
 
-A GitHub Actions workflow is included for PHP + MariaDB tests after you push the source to your own repository. It has not been run on your repository from this workspace. No Git commit/push is claimed.
+For the browser-side tests, use Node.js 18 or newer:
+
+```sh
+npm ci --prefix tests
+npm test --prefix tests
+```
+
+`tests/package-lock.json` pins the test dependencies. The native MySQL suites create and remove only randomly named test databases; they do not modify the configured application database.
+
+### Local preview without touching an existing database
+
+If your normal `bloodbridge_bd` database contains an older installation, do not run setup against it just to preview this version. Choose a new database name, start the PHP development server, then open `http://127.0.0.1:8502/setup.php` and install the demo database. For example, on a Mac with XAMPP:
+
+```sh
+BLOODBRIDGE_DB_NAME=bb_preview_local /Applications/XAMPP/xamppfiles/bin/php -d session.save_path=/tmp -S 127.0.0.1:8502 -t .
+```
+
+Keep `BLOODBRIDGE_DB_NAME` set to the same value whenever you restart the preview. The server binds to loopback only; it is not a public deployment. Sessions are isolated by project path and database name, so switching databases in one checkout cannot reuse a login from another database. Use only fictional records and the published demo accounts in this local preview.
+
+There is currently no GitHub Actions workflow in this repository; run the checks above before publishing changes. The test results described for release 1.1.0 are historical and do not replace testing the current checkout.
 
 ## Data and privacy boundaries
 

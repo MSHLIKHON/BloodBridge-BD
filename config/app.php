@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 date_default_timezone_set('Asia/Dhaka');
 ini_set('session.use_strict_mode', '1');
+require_once __DIR__ . '/database.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_name('BBBD_' . substr(hash('sha256',__DIR__),0,12));
+    // Isolate sessions when the same checkout serves different databases
+    // (for example, a local preview alongside an older installation).
+    session_name('BBBD_' . substr(hash('sha256', __DIR__ . "\0" . DB_NAME), 0, 12));
     session_set_cookie_params([
         'lifetime' => 0,
         'path' => '/',
@@ -15,8 +18,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     ]);
     session_start();
 }
-
-require_once __DIR__ . '/database.php';
 
 if (PHP_SAPI !== 'cli') {
     header('X-Content-Type-Options: nosniff');

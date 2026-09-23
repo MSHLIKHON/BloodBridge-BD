@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Create Account | BloodBridge BD</title><link rel="stylesheet" href="assets/css/style.css?v=71"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Create Account | BloodBridge BD</title><link rel="stylesheet" href="assets/css/style.css?v=72"></head>
 <body class="auth-body">
 <main class="auth-layout">
     <section class="auth-message">
