@@ -1,4 +1,5 @@
 <?php
+/** File purpose: Services provides shared application logic and presentation helpers. */
 declare(strict_types=1);
 
 function bb_one(PDO $pdo, string $sql, array $parameters = []): ?array
