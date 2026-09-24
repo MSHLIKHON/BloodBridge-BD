@@ -1,4 +1,5 @@
 <?php
+/** File purpose: Matching provides shared application logic and presentation helpers. */
 declare(strict_types=1);
 
 function personal_account(array $user): bool

@@ -1,4 +1,5 @@
 <?php
+/** File purpose: Address provides shared application logic and presentation helpers. */
 declare(strict_types=1);
 require_once __DIR__.'/locations.php';
 

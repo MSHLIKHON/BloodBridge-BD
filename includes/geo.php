@@ -1,4 +1,5 @@
 <?php
+/** File purpose: Geo provides shared application logic and presentation helpers. */
 declare(strict_types=1);
 
 function bangladesh_point(mixed $latitude,mixed $longitude): ?array

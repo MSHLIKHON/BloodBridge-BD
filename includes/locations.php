@@ -1,4 +1,5 @@
 <?php
+/** File purpose: Locations provides shared application logic and presentation helpers. */
 declare(strict_types=1);
 
 /**
