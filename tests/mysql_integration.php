@@ -1,4 +1,5 @@
 <?php
+/** File purpose: Mysql Integration provides automated regression coverage for BloodBridge BD. */
 declare(strict_types=1);
 // Native MySQL/MariaDB integration test. Creates and deletes ONLY a random test DB.
 if(PHP_SAPI!=='cli') { http_response_code(403);exit('CLI only.'); }

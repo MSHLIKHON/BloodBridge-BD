@@ -1,5 +1,7 @@
 # Test report — BloodBridge BD 1.1.0
 
+<!-- File purpose: TEST REPORT documents the BloodBridge BD release, workflow, or verification process. -->
+
 ## Result and limits
 
 The implementation was checked with **PHP 8.3.32 compiled to WebAssembly**, Node.js and an in-memory SQLite simulation. Results are in `automated-test-results.json`.

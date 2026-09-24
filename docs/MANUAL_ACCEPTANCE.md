@@ -1,5 +1,7 @@
 # Native XAMPP / browser acceptance checklist
 
+<!-- File purpose: MANUAL ACCEPTANCE documents the BloodBridge BD release, workflow, or verification process. -->
+
 Use a disposable copy and synthetic records. Actual-result cells are deliberately blank; do not turn them into PASS without executing the steps. Record PHP, MariaDB/MySQL, OS and browser versions, date, tester and screenshots separately.
 
 | ID | Test / steps | Expected result | Actual result | Status |

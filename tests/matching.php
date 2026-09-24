@@ -1,4 +1,5 @@
 <?php
+/** File purpose: Matching provides automated regression coverage for BloodBridge BD. */
 declare(strict_types=1);
 require_once __DIR__.'/workflow.php';
 require_once __DIR__.'/../includes/matching.php';

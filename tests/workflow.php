@@ -1,4 +1,5 @@
 <?php
+/** File purpose: Workflow provides automated regression coverage for BloodBridge BD. */
 declare(strict_types=1);
 // Sequential business-rule simulation only. No MySQL lock or migration claim.
 require_once __DIR__.'/../config/app.php';
