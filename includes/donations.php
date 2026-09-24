@@ -1,4 +1,5 @@
 <?php
+/** File purpose: Donations provides shared application logic and presentation helpers. */
 declare(strict_types=1);
 
 function create_direct_donation(PDO $pdo, array $user, int $hospitalId, string $date, ?int $clubId): int
