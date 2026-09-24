@@ -1,3 +1,4 @@
+<!-- File purpose: Footer provides shared application logic and presentation helpers. -->
     </main>
     <footer class="footer">
         <span class="footer-brand"><span class="footer-dot"></span>BloodBridge BD • Team NullLogic</span>

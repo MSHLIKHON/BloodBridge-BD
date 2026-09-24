@@ -1,3 +1,4 @@
+/** File purpose: Address provides browser-side behaviour for the BloodBridge BD interface. */
 document.querySelectorAll('[data-address-picker]').forEach(picker => {
     const data = JSON.parse(picker.querySelector('[data-address-data]').textContent);
     const division = picker.querySelector('[data-address-division]');

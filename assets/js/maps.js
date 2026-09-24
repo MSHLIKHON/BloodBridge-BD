@@ -1,3 +1,4 @@
+/** File purpose: Maps provides browser-side behaviour for the BloodBridge BD interface. */
 (() => {
     const createMap = canvas => {
         if (!window.L) throw new Error('Map could not load. You may enter coordinates manually.');

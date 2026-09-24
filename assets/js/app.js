@@ -1,3 +1,4 @@
+/** File purpose: App provides browser-side behaviour for the BloodBridge BD interface. */
 document.querySelector('[data-nav-toggle]')?.addEventListener('click', (event) => {
     const navigation = document.querySelector('[data-nav]');
     const isOpen = navigation?.classList.toggle('open') || false;
