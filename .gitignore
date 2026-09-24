@@ -1,3 +1,4 @@
+# File purpose: Keeps local credentials, dependencies, and runtime artifacts out of version control.
 # macOS and editor files
 .DS_Store
 .idea/

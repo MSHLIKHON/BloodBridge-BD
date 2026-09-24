@@ -1,4 +1,5 @@
 <?php
+/** File purpose: Database supplies application configuration without committing local secrets. */
 declare(strict_types=1);
 
 // Default XAMPP settings. Personal settings can stay in database.local.php.

@@ -1,1 +1,2 @@
+# File purpose: Blocks direct web access to the protected config directory.
 Require all denied

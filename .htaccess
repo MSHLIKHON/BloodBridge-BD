@@ -1,3 +1,4 @@
+# File purpose: Defines Apache defaults and access rules for the application root.
 Options -Indexes
 
 <FilesMatch "\.(sql|md)$">

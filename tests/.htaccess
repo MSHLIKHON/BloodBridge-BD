@@ -1,1 +1,2 @@
+# File purpose: Blocks direct web access to the protected tests directory.
 Require all denied

@@ -1,4 +1,5 @@
 <?php
+/** File purpose: Database.local.example supplies application configuration without committing local secrets. */
 declare(strict_types=1);
 
 // Copy this file as database.local.php and change only the needed values.
