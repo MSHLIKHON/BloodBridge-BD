@@ -1,5 +1,7 @@
 # Team Workflow
 
+<!-- File purpose: TEAM WORKFLOW documents the BloodBridge BD release, workflow, or verification process. -->
+
 ## Suggested responsibilities
 
 The team can update these responsibilities according to the actual work completed by each member.

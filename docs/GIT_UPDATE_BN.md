@@ -1,5 +1,7 @@
 # Existing Git repository update
 
+<!-- File purpose: GIT UPDATE BN documents the BloodBridge BD release, workflow, or verification process. -->
+
 এই ZIP-এ existing repository history নেই। এই কাজের সময় GitHub-এ commit/push করা হয়নি। শুধু source file, tests এবং documentation update হয়েছে।
 
 1. তোমার existing cloned repository-এর backup রাখো। Uncommitted কাজ থাকলে আগে review করে preserve করো।

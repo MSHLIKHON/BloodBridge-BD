@@ -1,5 +1,7 @@
 # BloodBridge BD 1.1 — demo শুরু
 
+<!-- File purpose: DEMO GUIDE BN documents setup and usage for BloodBridge BD. -->
+
 প্রথমে START_HERE_BN.html অনুসরণ করে setup.php চালান। এই নতুন flow আগের donor সরাসরি Accept flow-কে replace করেছে।
 
 1. Admin: Services → Testing Centre চালান। Hospital, club, prescription review ও reports দেখান। Admin-এর New Request নেই।

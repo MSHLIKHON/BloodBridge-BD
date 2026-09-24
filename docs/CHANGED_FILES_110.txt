@@ -1,3 +1,5 @@
+File purpose: CHANGED FILES 110 documents the BloodBridge BD release, workflow, or verification process.
+
 Version 1.1.0 changes relative to the preserved 1.0.0 build
 
 .github/workflows/php-tests.yml

@@ -1,5 +1,7 @@
 # GitHub-এ Project Upload করার নিয়ম
 
+<!-- File purpose: GITHUB SETUP BN documents the BloodBridge BD release, workflow, or verification process. -->
+
 ## ১. GitHub repository তৈরি
 
 GitHub-এ `BloodBridge-BD` নামে একটি নতুন repository তৈরি করো। Assessment চলাকালে `Private` রাখলে teacher এবং team members-কে collaborator হিসেবে যোগ করতে হবে। Repository তৈরির সময় README, `.gitignore` বা License automatically add করবে না—এই project-এ প্রয়োজনীয় ফাইল আগে থেকেই আছে।

@@ -1,5 +1,7 @@
 # Release 1.1.0
 
+<!-- File purpose: RELEASE 110 documents the BloodBridge BD release, workflow, or verification process. -->
+
 | Account | Operations | Monitoring / administration |
 | --- | --- | --- |
 | Donor / Seeker | Own requests, offers, selection, receipt, reservations, health, location, clubs | Own progress, notifications and history |

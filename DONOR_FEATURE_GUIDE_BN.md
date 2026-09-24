@@ -1,5 +1,7 @@
 # Donor features — version 1.0.0
 
+<!-- File purpose: DONOR FEATURE GUIDE BN documents setup and usage for BloodBridge BD. -->
+
 - একই personal account দিয়ে blood চাওয়া এবং donation enable করা যায়।
 - Services → Health Records-এ blood group, donation opt-in, reminder opt-out ও last received date।
 - My Donor Profile-এ last donated date, availability ও health declaration।

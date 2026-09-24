@@ -1,5 +1,7 @@
 # Changed-file guide — 1.0.0
 
+<!-- File purpose: CHANGED FILES documents the BloodBridge BD release, workflow, or verification process. -->
+
 Comparison base: the saved `BloodBridge_BD_Portable_Ready.zip` supplied for this project, not unprovided later edits on another computer. No existing file was deleted. No Git commit or push was performed by this build.
 
 ## Feature-to-file map
