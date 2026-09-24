@@ -1,4 +1,5 @@
 <?php
+/** File purpose: Request Documents handles the corresponding BloodBridge BD web workflow. */
 declare(strict_types=1);
 require_once __DIR__.'/includes/auth.php';
 require_login();

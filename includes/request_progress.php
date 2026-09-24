@@ -1,4 +1,5 @@
 <?php
+/** File purpose: Request Progress provides shared application logic and presentation helpers. */
 $responses=$isOwner?bb_all($pdo,'SELECT rr.*,u.full_name FROM request_responses rr JOIN users u ON u.id=rr.responder_id WHERE request_id=? ORDER BY rr.responded_at DESC',[$id]):[];
 $myOffer=bb_one($pdo,'SELECT response FROM request_responses WHERE request_id=? AND responder_id=?',[$id,$user['id']]);
 $selected=(int)$request['accepted_by']===(int)$user['id'] && $request['source_type']==='Donor';
