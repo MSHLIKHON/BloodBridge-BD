@@ -1,4 +1,5 @@
 <?php
+/** File purpose: Schema V100 applies an idempotent database schema upgrade. */
 declare(strict_types=1);
 
 // Called only by the explicit, authorized installer. No DDL during normal requests.

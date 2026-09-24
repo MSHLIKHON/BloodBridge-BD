@@ -1,3 +1,4 @@
+-- File purpose: V100 contains the versioned SQL migration for an existing installation.
 CREATE TABLE IF NOT EXISTS app_settings (
  setting_key VARCHAR(80) PRIMARY KEY,
  setting_value VARCHAR(500) NOT NULL

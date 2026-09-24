@@ -1,3 +1,4 @@
+-- File purpose: Defines the base database schema and demo seed data.
 CREATE DATABASE IF NOT EXISTS bloodbridge_bd
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;

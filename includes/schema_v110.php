@@ -1,4 +1,5 @@
 <?php
+/** File purpose: Schema V110 applies an idempotent database schema upgrade. */
 declare(strict_types=1);
 
 function migrate_v110(PDO $pdo): void

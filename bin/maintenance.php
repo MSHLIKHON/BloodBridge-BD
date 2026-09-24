@@ -1,4 +1,5 @@
 <?php
+/** File purpose: Maintenance runs scheduled BloodBridge BD maintenance from the command line. */
 declare(strict_types=1);
 if (PHP_SAPI !== 'cli') { http_response_code(403); exit('CLI only.'); }
 require_once __DIR__.'/../config/app.php';

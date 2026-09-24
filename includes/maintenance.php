@@ -1,4 +1,5 @@
 <?php
+/** File purpose: Maintenance provides shared application logic and presentation helpers. */
 declare(strict_types=1);
 
 function expire_record(PDO $pdo, string $table, int $id): bool
