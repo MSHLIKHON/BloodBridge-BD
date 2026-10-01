@@ -17,7 +17,7 @@ $load = db()->prepare(
             current_medications, verified_by_hospital, screened_by_user_id, screened_at,
             screening_notes, profile_updated_at
      FROM users WHERE id = ? AND donor_enabled = 1'
-);
+) ;
 $load->execute([$id]);
 $donor = $load->fetch();
 if (!$donor) {
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 bb_exec($pdo,'UPDATE users SET screening_status=?,verified_by_hospital=?,screened_by_user_id=?,screened_at=NOW(),screening_notes=?,profile_updated_at=NOW() WHERE id=?',[$status,$verified,$viewer['id'],$notes?:null,$id]);
                 create_notification($pdo,(int)$id,'Donor screening updated','Your screening status is now '.$status.'.','donor_profile.php','Screening');
                 audit_log($pdo,(int)$viewer['id'],'Update donor screening','User',(int)$id,$status);
-            });
+            }) ;
             flash('success','Donor screening information updated.');redirect('donor_details.php?id='.$id);
         } catch(Throwable $e) { $errors[]=safe_error($e); }
     }
@@ -99,12 +99,12 @@ require __DIR__ . '/includes/header.php';
             <div><dt>Condition details</dt><dd><?= e($donor['medical_conditions'] ?: 'None provided') ?></dd></div>
             <div><dt>Medications</dt><dd><?= e($donor['current_medications'] ?: 'None provided') ?></dd></div>
             <div><dt>Screening note</dt><dd><?= e($donor['screening_notes'] ?: 'No note') ?></dd></div>
-        </dl>
+    </dl>
     </section>
     <?php else: ?>
     <section class="content-card privacy-card"><span class="eyebrow">Privacy protected</span><h2>Medical details are confidential</h2><p>You can see the donor's eligibility and hospital-verification status. Specific medical information is restricted.</p></section>
     <?php endif; ?>
-</div>
+    </div>
 
 <?php if (in_array($viewer['role'], ['donor', 'hospital', 'admin'], true)): ?><p class="top-gap"><a class="button button-secondary" href="donation_history.php?donor_id=<?= (int) $donor['id'] ?>">View Donation History</a></p><?php endif; ?>
 
