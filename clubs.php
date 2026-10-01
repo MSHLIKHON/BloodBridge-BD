@@ -9,7 +9,8 @@ $pdo=db();$user=current_user();$id=(int)($_GET['id']??0);$errors=[];
 if($_SERVER['REQUEST_METHOD']==='POST') {
     verify_csrf();
     try { $updated=club_action($pdo,$user,$_POST);flash('success','Club workflow updated.');redirect('clubs.php?id='.$updated); }
-    catch(Throwable $e) { $errors[]=safe_error($e); }
+    catch(Throwable $e) { $errors[]=safe_error($e);  }
+
 }
 $admin=$user['role']==='admin';
 $club=$id?bb_one($pdo,'SELECT * FROM clubs WHERE id=?',[$id]):null;
