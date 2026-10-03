@@ -1,5 +1,4 @@
 <?php
-/** File purpose: Dashboard handles the corresponding BloodBridge BD web workflow. */
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/auth.php';
@@ -42,7 +41,7 @@ if ($role === 'donor') {
     $historyStatement->execute([$userId]);
 
     $stats = [
-        ['label' => 'Donation status', 'value' => $effectiveStatus, 'note' => $nextDate && $nextDate > date('Y-m-d') ? 'Interval ends ' . date('d M Y', strtotime($nextDate)) : 'Based on screening and availability'],
+        ['label' => 'Donation status', 'value' => $effectiveStatus, 'note' => $nextDate && $nextDate > date('Y-m-d') ? 'Eligible again ' . date('d M Y', strtotime($nextDate)) : 'Based on screening and availability'],
         ['label' => 'Matching requests', 'value' => $matchingRequests, 'note' => 'Pending requests for ' . ($donor['blood_group'] ?: 'your group')],
         ['label' => 'Accepted cases', 'value' => (int) $acceptedStatement->fetchColumn(), 'note' => 'Waiting for donation completion'],
         ['label' => 'Completed donations', 'value' => (int) $historyStatement->fetchColumn(), 'note' => 'Verified donation records'],
@@ -75,12 +74,15 @@ if ($role === 'donor') {
     $countRequest->execute([$userId]);
     $completed = $pdo->prepare("SELECT COUNT(*) FROM blood_requests WHERE seeker_id = ? AND status = 'Completed'");
     $completed->execute([$userId]);
+    $urgent = $pdo->prepare("SELECT COUNT(*) FROM blood_requests WHERE seeker_id = ? AND urgency = 'Emergency' AND status IN ('Pending', 'Accepted')");
+    $urgent->execute([$userId]);
     $reservations = $pdo->prepare("SELECT COUNT(*) FROM blood_reservations WHERE seeker_id = ? AND status IN ('Pending', 'Approved')");
     $reservations->execute([$userId]);
     $available = (int) $pdo->query('SELECT COALESCE(SUM(GREATEST(units - reserved_units, 0)), 0) FROM blood_inventory')->fetchColumn();
 
     $stats = [
         ['label' => 'Active requests', 'value' => (int) $countRequest->fetchColumn(), 'note' => 'Pending or accepted'],
+        ['label' => 'Emergency requests', 'value' => (int) $urgent->fetchColumn(), 'note' => 'Active high-priority cases'],
         ['label' => 'Reservations', 'value' => (int) $reservations->fetchColumn(), 'note' => 'Waiting or approved'],
         ['label' => 'Completed requests', 'value' => (int) $completed->fetchColumn(), 'note' => 'Successfully closed cases'],
         ['label' => 'Available bank units', 'value' => $available, 'note' => 'Live unreserved stock'],
@@ -110,7 +112,7 @@ if ($role === 'donor') {
     $inventory = $pdo->prepare(
         'SELECT COALESCE(SUM(GREATEST(units - reserved_units, 0)), 0) AS available_units,
                 COALESCE(SUM(reserved_units), 0) AS reserved_units,
-                SUM(CASE WHEN GREATEST(units - reserved_units, 0) < low_stock_threshold THEN 1 ELSE 0 END) AS low_groups
+                SUM(CASE WHEN GREATEST(units - reserved_units, 0) <= 2 THEN 1 ELSE 0 END) AS low_groups
          FROM blood_inventory WHERE hospital_id = ?'
     );
     $inventory->execute([$hospitalId]);
@@ -123,7 +125,7 @@ if ($role === 'donor') {
     $stats = [
         ['label' => 'Available units', 'value' => (int) ($stock['available_units'] ?? 0), 'note' => 'Total minus reserved stock'],
         ['label' => 'Reserved units', 'value' => (int) ($stock['reserved_units'] ?? 0), 'note' => 'Approved for collection'],
-        ['label' => 'Low-stock groups', 'value' => (int) ($stock['low_groups'] ?? 0), 'note' => 'Below the configured minimum'],
+        ['label' => 'Low-stock groups', 'value' => (int) ($stock['low_groups'] ?? 0), 'note' => 'Two or fewer available units'],
         ['label' => 'Needs review', 'value' => (int) $pendingRequests->fetchColumn() + (int) $pendingReservations->fetchColumn(), 'note' => 'Requests and reservations'],
     ];
     $heroTitle = (string) $hospital['name'];
@@ -147,8 +149,8 @@ if ($role === 'donor') {
 } else {
     $activeUsers = (int) $pdo->query("SELECT COUNT(*) FROM users WHERE account_status = 'Active'")->fetchColumn();
     $activeDonors = (int) $pdo->query(
-        "SELECT COUNT(*) FROM users WHERE donor_enabled = 1 AND account_status = 'Active' AND is_available = 1 AND screening_status = 'Eligible'
-         AND (last_donation_date IS NULL OR DATE_ADD(last_donation_date, INTERVAL " . app_setting('donation_interval_days',120) . " DAY) <= CURDATE())"
+        "SELECT COUNT(*) FROM users WHERE role = 'donor' AND account_status = 'Active' AND is_available = 1 AND screening_status = 'Eligible'
+         AND (last_donation_date IS NULL OR DATE_ADD(last_donation_date, INTERVAL 120 DAY) <= CURDATE())"
     )->fetchColumn();
     $pendingStaff = (int) $pdo->query("SELECT COUNT(*) FROM hospital_staff_applications WHERE status = 'Pending'")->fetchColumn();
     $openRequests = (int) $pdo->query("SELECT COUNT(*) FROM blood_requests WHERE status IN ('Pending', 'Accepted')")->fetchColumn();
@@ -207,7 +209,7 @@ require __DIR__ . '/includes/header.php';
     <div class="content-card dashboard-main">
         <div class="section-heading">
             <div><span class="eyebrow">Live database</span><h2><?= e($panelTitle) ?></h2><p><?= e($panelText) ?></p></div>
-            <a href="<?= $role==='admin'?'reports.php?kind=Requests':'requests.php' ?>">View all</a>
+            <a href="requests.php">View all</a>
         </div>
         <?php if (!$recentRequests): ?>
             <div class="empty-state">No relevant requests are available yet.</div>
@@ -222,8 +224,8 @@ require __DIR__ . '/includes/header.php';
                             <td><strong class="blood-group"><?= e($request['blood_group']) ?></strong> <?= (int) $request['units'] ?> unit(s)</td>
                             <td><?= e($request['location']) ?></td>
                             <td><?= e($request['source_type']) ?><?php if ($request['hospital_name']): ?><small class="table-note"><?= e($request['hospital_name']) ?></small><?php endif; ?></td>
-                            <td><span class="badge <?= request_status_class((string) $request['status']) ?>"><?= e(request_progress_label($request)) ?></span></td>
-                            <td><?php if($role==='admin'): ?><a href="reports.php?kind=Requests">Report</a><?php else: ?><a href="request_edit.php?id=<?= (int) $request['id'] ?>">Open</a><?php endif; ?></td>
+                            <td><span class="badge <?= request_status_class((string) $request['status']) ?>"><?= e($request['status']) ?></span></td>
+                            <td><a href="request_edit.php?id=<?= (int) $request['id'] ?>">Open</a></td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
