@@ -75,4 +75,47 @@
             finally {event.currentTarget.disabled=false;}
         });
     });
+    const searchModal=document.querySelector('[data-search-map-modal]');
+    const searchData=document.querySelector('[data-search-map-data]');
+    if(searchModal && searchData) {
+        let donors=[];
+        try {
+            const parsed=JSON.parse(searchData.textContent || '[]');
+            if(Array.isArray(parsed)) donors=parsed;
+        } catch(error) {
+            // A malformed payload must not break the rest of the page controls.
+        }
+        const panel=searchModal.querySelector('.map-modal-panel');
+        const canvas=searchModal.querySelector('[data-search-map-canvas]');
+        const message=searchModal.querySelector('[data-map-message]');
+        let map, opener;
+        const close=()=>{
+            searchModal.hidden=true;
+            document.body.classList.remove('modal-open');
+            if(opener) opener.focus();
+        };
+        const open=event=>{
+            if(event?.currentTarget) opener=event.currentTarget;
+            searchModal.hidden=false;document.body.classList.add('modal-open');
+            if(!map) {
+                try {
+                    map=createMap(canvas);
+                    const markers=donors.map(donor=>{
+                        const popup=document.createElement('div');
+                        const title=document.createElement('strong');title.textContent=donor.label+' · '+donor.blood_group;
+                        const area=document.createElement('div');area.textContent=donor.area+' · approximate area';
+                        popup.append(title,area);
+                        return L.circleMarker([donor.latitude,donor.longitude],{radius:8,color:'#a41436',fillColor:'#d9234e',fillOpacity:.8}).addTo(map).bindPopup(popup);
+                    });
+                    if(markers.length===1) map.setView(markers[0].getLatLng(),12);
+                    else if(markers.length>1) map.fitBounds(L.featureGroup(markers).getBounds(),{padding:[35,35],maxZoom:12});
+                } catch(error) {message.textContent=error.message;}
+            }
+            setTimeout(()=>{if(map)map.invalidateSize();panel.focus?.();},0);
+        };
+        document.querySelectorAll('[data-search-map-open]').forEach(button=>button.addEventListener('click',open));
+        searchModal.querySelectorAll('[data-search-map-close]').forEach(button=>button.addEventListener('click',close));
+        document.addEventListener('keydown',event=>{if(event.key==='Escape' && !searchModal.hidden)close();});
+        if(donors.length) open();
+    }
 })();

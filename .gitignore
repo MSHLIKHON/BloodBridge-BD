@@ -21,4 +21,8 @@ tmp/
 
 # Dependencies, if added later
 vendor/
+!assets/vendor/
+!assets/vendor/leaflet/
+!assets/vendor/leaflet/leaflet.css
+!assets/vendor/leaflet/leaflet.js
 node_modules/

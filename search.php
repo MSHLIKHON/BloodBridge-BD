@@ -12,16 +12,18 @@ try{$location=address_input($_GET,true);}catch(DomainException $e){$addressError
 $searched=isset($_GET['blood_group']) || isset($_GET['division']);
 $donors = [];
 $stocks = [];
+$mapDonors = [];
 
 if ($addressError==='' && $searched && in_array($bloodGroup, valid_blood_groups(), true)) {
     $locationLike = '%' . $location;
     $donorStatement = db()->prepare(
         "SELECT id, full_name, blood_group, location, last_donation_date, total_donations,
-                is_available, screening_status, verified_by_hospital, donor_enabled
+                is_available, screening_status, verified_by_hospital, donor_enabled,
+                latitude, longitude, location_consent, location_updated_at
          FROM users
          WHERE donor_enabled = 1 AND account_status = 'Active' AND role IN ('donor','seeker') AND blood_group = ? AND location LIKE ?
            AND is_available = 1 AND screening_status = 'Eligible'
-           AND (last_donation_date IS NULL OR DATE_ADD(last_donation_date, INTERVAL " . app_setting('donation_interval_days',120) . " DAY) <= CURDATE())
+           AND (last_donation_date IS NULL OR DATE_ADD(last_donation_date, INTERVAL " . (int) app_setting('donation_interval_days',120) . " DAY) <= CURDATE())
            AND id <> ".(int)current_user()['id']."
            AND NOT EXISTS (SELECT 1 FROM blood_requests b WHERE b.accepted_by=users.id AND b.source_type='Donor' AND b.status='Accepted')
            AND NOT EXISTS (SELECT 1 FROM direct_donations d WHERE d.donor_id=users.id AND d.status IN ('Pending','Screened'))
@@ -29,6 +31,17 @@ if ($addressError==='' && $searched && in_array($bloodGroup, valid_blood_groups(
     );
     $donorStatement->execute([$bloodGroup, $locationLike]);
     $donors = $donorStatement->fetchAll();
+    foreach ($donors as $donor) {
+        $locationIsCurrent = !empty($donor['location_updated_at']) && strtotime((string) $donor['location_updated_at']) >= time() - 30 * 86400;
+        if (!$donor['location_consent'] || !$locationIsCurrent || $donor['latitude'] === null || $donor['longitude'] === null) continue;
+        $mapDonors[] = [
+            'label' => 'Available donor #' . (int) $donor['id'],
+            'blood_group' => $donor['blood_group'],
+            'latitude' => round((float) $donor['latitude'], 2),
+            'longitude' => round((float) $donor['longitude'], 2),
+            'area' => $donor['location'],
+        ];
+    }
 
     $stockStatement = db()->prepare(
         'SELECT bi.hospital_id, bi.blood_group, bi.units, bi.reserved_units,
@@ -46,6 +59,7 @@ if ($addressError==='' && $searched && in_array($bloodGroup, valid_blood_groups(
 
 $pageTitle = 'Search Blood';
 $enableLiveUpdates = true;
+$enableMap = true;
 require __DIR__ . '/includes/header.php';
 ?>
 <section class="page-heading">
@@ -62,6 +76,7 @@ require __DIR__ . '/includes/header.php';
 </section>
 
 <?php if ($searched): ?>
+<?php if ($mapDonors): ?><div class="map-result-actions"><button class="button button-primary" type="button" data-search-map-open aria-haspopup="dialog">View <?= count($mapDonors) ?> mapped donor<?= count($mapDonors) === 1 ? '' : 's' ?> in this area</button><span>Markers use approximate, consented locations.</span></div><?php endif; ?>
 <div class="result-grid">
     <section class="content-card">
         <div class="section-heading"><div><span class="eyebrow">Option 1</span><h2>Matching donors</h2></div><span class="count-pill"><?= count($donors) ?> found</span></div>
@@ -74,5 +89,17 @@ require __DIR__ . '/includes/header.php';
         <?php if (in_array(current_user()['role'], ['seeker', 'donor'], true)): ?><a class="button button-secondary button-full" href="request_create.php">Create Blood-Bank Request</a><?php endif; ?>
     </section>
 </div>
+<?php if ($mapDonors): ?>
+<div class="map-modal" data-search-map-modal hidden>
+    <div class="map-modal-backdrop" data-search-map-close></div>
+    <section class="map-modal-panel" role="dialog" aria-modal="true" aria-labelledby="search-map-title" tabindex="-1">
+        <div class="section-heading"><div><span class="eyebrow">Bangladesh donor map</span><h2 id="search-map-title"><?= e($bloodGroup) ?> donors in <?= e($location) ?></h2></div><button class="map-modal-close" type="button" data-search-map-close aria-label="Close donor map">&times;</button></div>
+        <p class="muted">Only donors who consented to location sharing are shown. Markers are rounded approximate areas, not exact addresses or live tracking.</p>
+        <div class="search-map-canvas" data-search-map-canvas aria-label="Approximate available donor locations in Bangladesh"></div>
+        <p data-map-message role="status"><?= count($mapDonors) ?> available donor<?= count($mapDonors) === 1 ? '' : 's' ?> shown.</p>
+    </section>
+</div>
+<script type="application/json" data-search-map-data><?= json_encode($mapDonors, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script>
+<?php endif; ?>
 <?php endif; ?>
 <?php require __DIR__ . '/includes/footer.php'; ?>

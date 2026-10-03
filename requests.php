@@ -35,7 +35,21 @@ if(personal_account($user) && in_array($responseFilter,$allowedResponses,true)) 
 $ownResponses=personal_account($user)?array_column(bb_all(db(),'SELECT request_id,response FROM request_responses WHERE responder_id=?',[$user['id']]),'response','request_id'):[];
 $sql =
     'SELECT br.*, u.full_name AS seeker_name, u.phone AS seeker_phone, a.full_name AS accepted_name,
-            h.name AS hospital_name
+            h.name AS hospital_name,
+            (SELECT COUNT(*) FROM users candidate
+             WHERE candidate.id <> br.seeker_id
+               AND candidate.role IN (\'donor\', \'seeker\')
+               AND candidate.donor_enabled = 1
+               AND candidate.account_status = \'Active\'
+               AND candidate.blood_group = br.blood_group
+               AND candidate.is_available = 1
+               AND candidate.screening_status = \'Eligible\'
+               AND (candidate.last_donation_date IS NULL OR DATE_ADD(candidate.last_donation_date, INTERVAL ' . (int) app_setting('donation_interval_days', 120) . ' DAY) <= CURDATE())
+               AND NOT EXISTS (SELECT 1 FROM blood_requests active_request WHERE active_request.accepted_by = candidate.id AND active_request.source_type = \'Donor\' AND active_request.status = \'Accepted\')
+               AND NOT EXISTS (SELECT 1 FROM direct_donations active_donation WHERE active_donation.donor_id = candidate.id AND active_donation.status IN (\'Pending\', \'Screened\'))
+            ) AS matching_donor_count,
+            (SELECT COUNT(*) FROM request_responses interested
+             WHERE interested.request_id = br.id AND interested.response = \'Interested\') AS interested_count
      FROM blood_requests br
      JOIN users u ON u.id = br.seeker_id
      LEFT JOIN users a ON a.id = br.accepted_by
@@ -73,13 +87,14 @@ require __DIR__ . '/includes/header.php';
     <?php else: ?>
         <div class="table-wrap">
             <table>
-                <thead><tr><th>Request</th><th>Seeker</th><th>Need</th><th>Source</th><th>Urgency</th><th>Status</th><th>Actions</th></tr></thead>
+                <thead><tr><th>Request</th><th>Seeker</th><th>Need</th><th>Donor match</th><th>Source</th><th>Urgency</th><th>Status</th><th>Actions</th></tr></thead>
                 <tbody>
                 <?php foreach ($requests as $request): ?>
                     <tr>
                         <td><strong>#<?= (int) $request['id'] ?></strong><small><?= e(date('d M Y', strtotime($request['created_at']))) ?></small></td>
                         <td><?= e($request['seeker_name']) ?><small><?= e($request['location']) ?></small></td>
                         <td><strong class="blood-group"><?= e($request['blood_group']) ?></strong><small><?= (int) $request['units'] ?> unit(s)</small></td>
+                        <td><?php if ($request['source_type'] === 'Donor'): ?><strong><?= (int) $request['matching_donor_count'] ?> eligible</strong><small><?= (int) $request['interested_count'] ?> interested</small><small><?= $request['accepted_name'] ? 'Selected: ' . e($request['accepted_name']) : 'Selected: Not yet' ?></small><?php else: ?><span class="muted">Blood bank</span><?php endif; ?></td>
                         <td><?= e($request['source_type']) ?></td>
                         <td><?= e($request['urgency']) ?></td>
                         <td><span class="badge <?= request_status_class($request['status']) ?>"><?= e(request_progress_label($request)) ?></span><?php if(isset($ownResponses[$request['id']])): ?><small>Your response: <?= e($ownResponses[$request['id']]) ?></small><?php endif; ?></td>
