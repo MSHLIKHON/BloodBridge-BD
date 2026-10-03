@@ -82,6 +82,16 @@ php tests/mysql_integration.php legacy
 
 The first three do not modify your application database. The workflow suite uses **in-memory SQLite with a documented MySQL-syntax adapter**, so it tests sequential business rules only. The native suite creates a randomly named `bb_qa_...` database with configured MySQL credentials, refuses to overwrite an existing database, then removes only the test database. The MySQL account needs create/drop privileges for that suite. It never selects the normal project database for mutations.
 
+## Optional presentation data
+
+After installing the normal demo database, the CLI seeder can add linked fictional examples for presentation: five requests, reservations, clubs, campaigns, direct donations and history records, plus documents, staff applications, notifications and inventory events. It uses the published demo accounts, marks its records with `[DEMO-SCENARIO]`, stores a seed version in `app_settings`, and safely skips a repeated run.
+
+```sh
+php bin/seed_demo_scenarios.php --apply
+```
+
+Run it only against a local demonstration database. It requires the standard demo accounts created by a fresh installation. The records are fictional and must not be presented as real patients, hospitals or clinical evidence.
+
 For the browser-side tests, use Node.js 18 or newer:
 
 ```sh
