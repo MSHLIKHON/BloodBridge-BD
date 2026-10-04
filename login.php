@@ -11,7 +11,7 @@ $error = null;
 $ready = database_ready();
 $flashMessage = pull_flash();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] ==='POST') {
     verify_csrf();
 
     if (!$ready) {
