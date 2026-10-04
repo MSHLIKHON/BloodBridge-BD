@@ -15,7 +15,7 @@ if ($user['role'] === 'hospital') {
     $params[] = (int) $user['hospital_id'];
     $params[] = (int) $user['id'];
 }
-$sql = 'SELECT dh.*, donor.full_name AS donor_name, h.name AS hospital_name, verifier.full_name AS verifier_name
+$sql = 'SELECT dh.*, donor.full_name AS donor_name, h.name AS hospital_name,verifier.full_name AS verifier_name
         FROM donation_history dh LEFT JOIN users donor ON donor.id = dh.donor_id
         LEFT JOIN hospitals h ON h.id = dh.hospital_id LEFT JOIN users verifier ON verifier.id = dh.verified_by_user_id';
 if ($where) $sql .= ' WHERE ' . implode(' AND ', $where);
