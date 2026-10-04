@@ -12,7 +12,7 @@ if (!$id) {
 }
 
 $load = db()->prepare(
-    'SELECT id, full_name, email, blood_group, location, phone, account_status, last_donation_date, total_donations,
+    'SELECT id, full_name, email, blood_group, location, phone, account_status,last_donation_date, total_donations,
             is_available, screening_status, has_medical_condition, medical_conditions,
             current_medications, verified_by_hospital, screened_by_user_id, screened_at,
             screening_notes, profile_updated_at
