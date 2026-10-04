@@ -7,7 +7,7 @@ require_role(['donor']);
 
 $userId = (int) current_user()['id'];
 $load = db()->prepare(
-    'SELECT id, full_name, email, blood_group, location, phone, last_donation_date, total_donations,
+    'SELECT id, full_name, email, blood_group, location, phone, last_donation_date,total_donations,
             is_available, screening_status, has_medical_condition, medical_conditions,
             current_medications, verified_by_hospital, screening_notes
      FROM users WHERE id = ? AND role = \'donor\''
