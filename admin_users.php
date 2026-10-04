@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = (int) ($_POST['user_id'] ?? 0);
     $action = (string) ($_POST['action'] ?? '');
 
-    $find = $pdo->prepare('SELECT id, full_name, role, account_status, email_verified, phone_verified FROM users WHERE id = ? LIMIT 1');
+    $find = $pdo->prepare('SELECT id, full_name, role, account_status,email_verified, phone_verified FROM users WHERE id = ? LIMIT 1');
     $find->execute([$userId]);
     $target = $find->fetch();
 
