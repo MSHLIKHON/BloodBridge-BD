@@ -22,6 +22,6 @@ $selected=(int)$request['accepted_by']===(int)$user['id'] && $request['source_ty
 <?php endif; ?>
 <?php if($isOwner || $selected || $isLinkedHospital): ?><h3>Timeline</h3><?php foreach(bb_all($pdo,'SELECT event,created_at FROM request_events WHERE request_id=? ORDER BY id',[$id]) as $event): ?><p><?= e($event['created_at']) ?> · <?= e($event['event']) ?></p><?php endforeach; ?><?php endif; ?>
 </section>
-<?php if($isOwner && $request['source_type']==='Donor' && in_array($request['status'],['Pending','Accepted'],true)): ?>
+<?php if($isOwner && $user['role']!=='hospital' && $request['source_type']==='Donor' && in_array($request['status'],['Pending','Accepted'],true)): ?>
 <section class="content-card top-gap" data-nearby="<?= (int)$id ?>"><h2>Available donors within 1 km</h2><p>Consenting donors with recently saved locations and matching blood groups. This is straight-line distance from your request point, not live tracking or clinical clearance.</p><button type="button" class="button button-primary">Check Nearby Donors</button><p data-map-message role="status"></p><div data-map-canvas style="height:320px" aria-label="Approximate nearby donor map"></div><ul data-nearby-list></ul></section>
 <?php endif; ?>

@@ -31,24 +31,11 @@ $isLinkedHospital = $user['role'] === 'hospital' && $request['source_type'] === 
 $priorResponse=bb_one($pdo,'SELECT response FROM request_responses WHERE request_id=? AND responder_id=?',[$id,$user['id']]);
 $canView = (bool)$priorResponse || $isOwner || ($isMatchingDonor && $request['status']==='Pending') || $isLinkedHospital || can_review_prescription($pdo,$user,$request) || (int)$request['accepted_by']===(int)$user['id'];
 if (!$canView) { http_response_code(403); exit('You do not have permission to view this request.'); }
-$canEditDetails = $request['status'] === 'Pending' && $isOwner;
-$matchingDonorCount = 0;
+$canEditDetails = $request['status'] === 'Pending' && $isOwner && $user['role'] !== 'hospital';
 $interestedDonorCount = 0;
+$groupDonorCount = 0;
 if ($request['source_type'] === 'Donor') {
-    $matchingDonorCount = (int) bb_one($pdo,
-        "SELECT COUNT(*) AS total FROM users candidate
-         WHERE candidate.id <> ?
-           AND candidate.role IN ('donor','seeker')
-           AND candidate.donor_enabled = 1
-           AND candidate.account_status = 'Active'
-           AND candidate.blood_group = ?
-           AND candidate.is_available = 1
-           AND candidate.screening_status = 'Eligible'
-           AND (candidate.last_donation_date IS NULL OR DATE_ADD(candidate.last_donation_date, INTERVAL " . (int) app_setting('donation_interval_days', 120) . " DAY) <= CURDATE())
-           AND NOT EXISTS (SELECT 1 FROM blood_requests active_request WHERE active_request.accepted_by = candidate.id AND active_request.source_type = 'Donor' AND active_request.status = 'Accepted')
-           AND NOT EXISTS (SELECT 1 FROM direct_donations active_donation WHERE active_donation.donor_id = candidate.id AND active_donation.status IN ('Pending','Screened'))",
-        [(int) $request['seeker_id'], $request['blood_group']]
-    )['total'];
+    $groupDonorCount=(int)bb_one($pdo,"SELECT COUNT(*) AS total FROM users WHERE id<>? AND role IN ('donor','seeker') AND donor_enabled=1 AND account_status='Active' AND blood_group=?",[(int)$request['seeker_id'],$request['blood_group']])['total'];
     $interestedDonorCount = (int) bb_one($pdo,
         "SELECT COUNT(*) AS total FROM request_responses WHERE request_id = ? AND response = 'Interested'",
         [(int) $id]
@@ -253,7 +240,7 @@ $pageTitle = 'Request #' . $id; $enableLiveUpdates = !$canEditDetails; require _
 <p class="muted">Prescription: <?= e($request['prescription_status']) ?> · Expires: <?= e($request['expires_at']?:'Not set') ?><?php if($isOwner || can_review_prescription($pdo,$user,$request)): ?> · <a href="request_documents.php?id=<?= (int)$id ?>">Prescription &amp; patient history</a><?php endif; ?></p>
 <?php if ($errors): ?><div class="alert alert-error"><ul><?php foreach ($errors as $error): ?><li><?= e($error) ?></li><?php endforeach; ?></ul></div><?php endif; ?>
 <div class="detail-grid">
-    <section class="content-card"><div class="section-heading"><div><span class="eyebrow">Request details</span><h2><?= e($request['blood_group']) ?> • <?= (int) $request['units'] ?> unit(s)</h2></div><span class="badge <?= request_status_class($request['status']) ?>"><?= e(request_progress_label($request)) ?></span></div><dl class="detail-list"><div><dt>Location</dt><dd><?= e($request['location']) ?></dd></div><div><dt>Source</dt><dd><?= e($request['source_type']) ?><?= $request['hospital_name'] ? ' • ' . e($request['hospital_name']) : '' ?></dd></div><?php if ($request['source_type'] === 'Donor'): ?><div><dt>Matching donors</dt><dd><?= $matchingDonorCount ?> eligible • <?= $interestedDonorCount ?> interested</dd></div><?php endif; ?><div><dt>Urgency</dt><dd><?= e($request['urgency']) ?></dd></div><div><dt>Seeker contact</dt><dd><?= $showSeekerPhone ? e($request['seeker_phone']) : 'Shared after acceptance' ?></dd></div><div><dt>Accepted by</dt><dd><?php if ($request['accepted_name']): ?><?php if ($request['source_type'] === 'Donor'): ?><a href="donor_details.php?id=<?= (int) $request['accepted_by'] ?>"><?= e($request['accepted_name']) ?></a><?php else: ?><?= e($request['accepted_name']) ?><?php endif; ?><?= $showAcceptedPhone ? ' • ' . e($request['accepted_phone']) : '' ?><?php else: ?>Waiting for response<?php endif; ?></dd></div><div><dt>Note</dt><dd><?= e($request['note'] ?: 'No note') ?></dd></div></dl></section>
+    <section class="content-card"><div class="section-heading"><div><span class="eyebrow">Request details</span><h2><?= e($request['blood_group']) ?> • <?= (int) $request['units'] ?> unit(s)</h2></div><span class="badge <?= request_status_class($request['status']) ?>"><?= e(request_progress_label($request)) ?></span></div><dl class="detail-list"><div><dt>Location</dt><dd><?= e($request['location']) ?></dd></div><div><dt>Source</dt><dd><?= e($request['source_type']) ?><?= $request['hospital_name'] ? ' • ' . e($request['hospital_name']) : '' ?></dd></div><?php if ($request['source_type'] === 'Donor' && !$request['accepted_name'] && $request['status']==='Pending'): ?><div><dt>Donor responses</dt><dd><?= $groupDonorCount ?> registered in this blood group • <?= $interestedDonorCount ?> interested</dd></div><?php endif; ?><div><dt>Urgency</dt><dd><?= e($request['urgency']) ?></dd></div><div><dt>Seeker contact</dt><dd><?= $showSeekerPhone ? e($request['seeker_phone']) : 'Shared after acceptance' ?></dd></div><div><dt>Accepted by</dt><dd><?php if ($request['accepted_name']): ?><?php if ($request['source_type'] === 'Donor'): ?><a href="donor_details.php?id=<?= (int) $request['accepted_by'] ?>"><?= e($request['accepted_name']) ?></a><?php else: ?><?= e($request['accepted_name']) ?><?php endif; ?><?= $showAcceptedPhone ? ' • ' . e($request['accepted_phone']) : '' ?><?php else: ?>Waiting for response<?php endif; ?></dd></div><div><dt>Note</dt><dd><?= e($request['note'] ?: 'No note') ?></dd></div></dl></section>
     <section class="content-card"><span class="eyebrow">Available action</span><h2>Respond safely</h2>
         <?php if ($isMatchingDonor && $request['status'] === 'Pending'): ?><p>Express interest. The seeker selects one donor; showing interest does not reserve you.</p><form method="post" class="form-actions"><input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>"><button class="button button-primary" name="action" value="interest">Interested</button><button class="button button-secondary" name="action" value="decline">Reject / Unavailable</button></form>
         <?php elseif ($isLinkedHospital && $request['status'] === 'Pending'): ?><p>Review stock and confirm whether your hospital can support this request.</p><form method="post" class="form-actions"><input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>"><input type="hidden" name="action" value="hospital_response"><button class="button button-primary" name="response" value="Accepted">Accept</button><button class="button button-secondary" name="response" value="Rejected">Reject</button></form>

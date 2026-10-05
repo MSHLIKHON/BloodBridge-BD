@@ -15,7 +15,7 @@ function request_event(PDO $pdo, int $requestId, int $actorId, string $event, st
 
 function request_match_action(PDO $pdo, array $actor, int $id, string $action, int $candidateId=0, string $note=''): void
 {
-    if (!personal_account($actor)) throw new DomainException('Only personal accounts can respond or select a donor.');
+    if (!personal_account($actor) && $actor['role'] !== 'hospital') throw new DomainException('Only personal or hospital accounts can manage donor requests.');
     if(strlen($note)>500) throw new DomainException('Keep the note within 500 characters.');
     bb_transaction($pdo,function() use($pdo,$actor,$id,$action,$candidateId,$note):void {
         $r=bb_one($pdo,'SELECT * FROM blood_requests WHERE id=? FOR UPDATE',[$id]);
@@ -23,6 +23,7 @@ function request_match_action(PDO $pdo, array $actor, int $id, string $action, i
         ensure_not_expired($r);
         if(!in_array($r['status'],['Pending','Accepted'],true)) throw new DomainException('This request is already closed.');
         $uid=(int)$actor['id']; $owner=$uid===(int)$r['seeker_id'];
+        if ($actor['role']==='hospital' && (!$owner || (int)$r['review_hospital_id']!==(int)$actor['hospital_id'])) throw new DomainException('This request does not belong to your hospital.');
         $self=bb_one($pdo,'SELECT * FROM users WHERE id=? FOR UPDATE',[$uid]);
         if(!$self || $self['account_status']!=='Active') throw new DomainException('Account unavailable.');
         $response=bb_one($pdo,'SELECT * FROM request_responses WHERE request_id=? AND responder_id=?',[$id,$uid]);
@@ -31,7 +32,7 @@ function request_match_action(PDO $pdo, array $actor, int $id, string $action, i
         };
         $link='request_edit.php?id='.$id;
         if(in_array($action,['interest','decline'],true)) {
-            if($owner || $r['status']!=='Pending' || !$self['donor_enabled'] || $self['blood_group']!==$r['blood_group']) throw new DomainException('This request is not available for your response.');
+            if($actor['role']==='hospital' || $owner || $r['status']!=='Pending' || !$self['donor_enabled'] || $self['blood_group']!==$r['blood_group']) throw new DomainException('This request is not available for your response.');
             if($action==='interest') {
                 if($r['prescription_status']!=='Reviewed') throw new DomainException('The prescription must be reviewed first.');
                 if(donor_effective_status($self)!=='Eligible') throw new DomainException('Your donor profile is not currently eligible.');
@@ -112,13 +113,13 @@ function confirm_donor_receipt(PDO $pdo,array $actor,int $id): void
 {
     bb_transaction($pdo,function()use($pdo,$actor,$id):void {
         $r=bb_one($pdo,'SELECT * FROM blood_requests WHERE id=? FOR UPDATE',[$id]);
-        if(!$r || $r['source_type']!=='Donor' || $r['status']!=='Accepted' || (int)$r['seeker_id']!==(int)$actor['id'] || !personal_account($actor)) throw new DomainException('Only the owner can confirm receipt of an accepted donor request.');
+        if(!$r || $r['source_type']!=='Donor' || $r['status']!=='Accepted' || (int)$r['seeker_id']!==(int)$actor['id'] || (!personal_account($actor) && !($actor['role']==='hospital' && (int)$r['review_hospital_id']===(int)$actor['hospital_id']))) throw new DomainException('Only the owner can confirm receipt of an accepted donor request.');
         if(!$r['donor_confirmed_at'] || !$r['donor_reported_at'] || $r['prescription_status']!=='Reviewed') throw new DomainException('Donor confirmation, donation report and reviewed prescription are required.');
         $donor=bb_one($pdo,'SELECT * FROM users WHERE id=? FOR UPDATE',[$r['accepted_by']]);
         if(!$donor) throw new DomainException('Donor record missing.');
         complete_donor_history($pdo,$donor,$id,null,null,(int)$actor['id'],null,substr($r['donor_reported_at'],0,10));
         bb_exec($pdo,"UPDATE blood_requests SET status='Completed',completed_at=NOW(),outcome='Received',outcome_note=NULL WHERE id=?",[$id]);
-        if($r['patient_relation']==='Self') bb_exec($pdo,'UPDATE users SET last_received_date=CURDATE() WHERE id=?',[$actor['id']]);
+        if($r['patient_relation']==='Self' && personal_account($actor)) bb_exec($pdo,'UPDATE users SET last_received_date=CURDATE() WHERE id=?',[$actor['id']]);
         request_event($pdo,$id,(int)$actor['id'],'Blood received');
         create_notification($pdo,(int)$donor['id'],'Donation completed','Both sides confirmed request #'.$id.'.','donation_history.php','Donation');
         create_notification($pdo,(int)$actor['id'],'Blood received','Request #'.$id.' is completed.','request_edit.php?id='.$id,'Request');

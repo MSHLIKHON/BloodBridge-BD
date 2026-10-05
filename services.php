@@ -8,11 +8,12 @@ require __DIR__.'/includes/header.php';
 ?>
 <section class="page-heading"><div><span class="eyebrow">BloodBridge BD</span><h1>Services</h1><p>Additional workflows using your existing account.</p></div></section>
 <div class="detail-grid">
-<?php if(current_user()['role']!=='hospital'): ?><section class="content-card"><h2>University clubs</h2><p>Join an approved club, coordinate requests or register a campaign.</p><a class="button button-primary" href="clubs.php">Open Clubs</a></section><?php endif; ?>
-<?php if(current_user()['role']!=='admin'): ?><section class="content-card"><h2>Hospital donations</h2><p>Request, screen and confirm a direct donation.</p><a class="button button-primary" href="direct_donations.php">Open Donations</a></section><?php endif; ?>
+<?php if(in_array(current_user()['role'],['donor','seeker'],true)): ?><section class="content-card"><h2>University clubs</h2><p>Join an approved club, coordinate requests or register a campaign.</p><a class="button button-primary" href="clubs.php">Open Clubs</a></section><?php endif; ?>
+<?php if(in_array(current_user()['role'],['donor','hospital'],true)): ?><section class="content-card"><h2>Hospital donations</h2><p>Request, screen and confirm a direct donation.</p><a class="button button-primary" href="direct_donations.php">Open Donations</a></section><?php endif; ?>
 <?php if (in_array(current_user()['role'],['donor','seeker'],true)): ?>
 <section class="content-card"><h2>My location</h2><p>Division, district, area and optional private nearby matching.</p><a class="button button-primary" href="my_location.php">Manage Location</a></section>
-<section class="content-card"><h2>My health records</h2><p>Private reports, consent, blood group and reminder preferences.</p><a class="button button-primary" href="health_records.php">Open Health Records</a><p><a href="donor_profile.php">Donation profile</a> · <a href="donation_history.php">Donation history</a> · <a href="request_create.php">Request blood</a> · <a href="reservations.php">My reservations</a></p></section>
+<?php if(current_user()['role']==='donor'): ?><section class="content-card"><h2>My health records</h2><p>Private reports, consent, blood group and reminder preferences.</p><a class="button button-primary" href="health_records.php">Open Health Records</a><p><a href="donor_profile.php">Donation profile</a> · <a href="donation_history.php">Donation history</a></p></section><?php endif; ?>
+<?php if(current_user()['role']==='seeker'): ?><section class="content-card"><h2>Find blood</h2><p>Search donors, create a request or reserve available hospital stock.</p><a class="button button-primary" href="search.php">Search Blood</a><p><a href="request_create.php">New request</a> · <a href="reservations.php">My reservations</a></p></section><?php endif; ?>
 <?php endif; ?>
 <?php if (in_array(current_user()['role'],['admin','hospital'],true)): ?>
 <section class="content-card"><h2>Prescription review</h2><p>Review only the requests assigned to your account or hospital.</p><a class="button button-primary" href="request_documents.php">Review Requests</a></section>

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/address.php';
-require_role(['donor','seeker']);
+require_role(['seeker']);
 
 $bloodGroup = trim((string) ($_GET['blood_group'] ?? 'B+'));
 $location='';$addressError='';

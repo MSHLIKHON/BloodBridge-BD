@@ -30,17 +30,14 @@ $liveVersion = $user && !empty($enableLiveUpdates) ? live_data_version((int) $us
         <nav class="nav" data-nav>
             <a class="<?= $currentPage === 'dashboard.php' ? 'active' : '' ?>" href="dashboard.php">Dashboard</a>
             <a class="<?= in_array($currentPage,['services.php','clubs.php','health_records.php','direct_donations.php','reports.php','settings.php','stock_settings.php','request_documents.php'],true) ? 'active' : '' ?>" href="services.php">Services</a>
-            <?php if (in_array($user['role'], ['seeker', 'donor'], true)): ?><a class="<?= $currentPage === 'search.php' ? 'active' : '' ?>" href="search.php">Search</a><?php endif; ?>
+            <?php if ($user['role'] === 'seeker'): ?><a class="<?= $currentPage === 'search.php' ? 'active' : '' ?>" href="search.php">Search</a><?php endif; ?>
             <?php if($user['role']!=='admin'): ?><a class="<?= in_array($currentPage, ['requests.php', 'request_edit.php'], true) ? 'active' : '' ?>" href="requests.php">Requests</a><?php endif; ?>
-            <?php if (in_array($user['role'],['donor','seeker'],true)): ?>
-                <a class="<?= $currentPage === 'donor_profile.php' ? 'active' : '' ?>" href="donor_profile.php">My Profile</a>
-                <a class="<?= $currentPage === 'donation_history.php' ? 'active' : '' ?>" href="donation_history.php">History</a>
-            <?php endif; ?>
+            <?php if ($user['role'] === 'donor'): ?><a class="<?= $currentPage === 'donor_profile.php' ? 'active' : '' ?>" href="donor_profile.php">My Profile</a><a class="<?= $currentPage === 'donation_history.php' ? 'active' : '' ?>" href="donation_history.php">History</a><?php endif; ?>
             <?php if (in_array($user['role'], ['hospital', 'admin'], true)): ?>
                 <a class="<?= $currentPage === 'inventory.php' ? 'active' : '' ?>" href="inventory.php">Inventory</a>
                 <a class="<?= $currentPage === 'reservations.php' ? 'active' : '' ?>" href="reservations.php">Reservations</a>
                 <a class="<?= in_array($currentPage, ['donors.php', 'donor_details.php'], true) ? 'active' : '' ?>" href="donors.php">Donors</a>
-            <?php elseif (in_array($user['role'],['donor','seeker'],true)): ?>
+            <?php elseif ($user['role'] === 'seeker'): ?>
                 <a class="<?= $currentPage === 'reservations.php' ? 'active' : '' ?>" href="reservations.php">Reservations</a>
             <?php endif; ?>
             <?php if ($user['role'] === 'admin'): ?>
@@ -48,7 +45,7 @@ $liveVersion = $user && !empty($enableLiveUpdates) ? live_data_version((int) $us
                 <a class="<?= $currentPage === 'admin_users.php' ? 'active' : '' ?>" href="admin_users.php">Users</a>
             <?php endif; ?>
             <a class="notification-link <?= $currentPage === 'notifications.php' ? 'active' : '' ?>" href="notifications.php" aria-label="Notifications">Alerts<?php if ($notificationCount > 0): ?><span><?= $notificationCount > 99 ? '99+' : $notificationCount ?></span><?php endif; ?></a>
-            <?php if (in_array($user['role'], ['seeker', 'donor'], true)): ?><a class="nav-primary" href="request_create.php">New Request</a><?php endif; ?>
+            <?php if (in_array($user['role'], ['seeker', 'hospital'], true)): ?><a class="nav-primary" href="request_create.php">New Request</a><?php endif; ?>
             <a class="nav-logout" href="logout.php">Logout</a>
         </nav>
     <?php endif; ?>

@@ -127,8 +127,9 @@ if ($role === 'donor') {
         ['label' => 'Needs review', 'value' => (int) $pendingRequests->fetchColumn() + (int) $pendingReservations->fetchColumn(), 'note' => 'Requests and reservations'],
     ];
     $heroTitle = (string) $hospital['name'];
-    $heroText = 'Manage live inventory, approve reservations, respond to blood-bank requests and screen donors.';
+    $heroText = 'Manage stock, reservations and donor requests for your hospital.';
     $quickLinks = [
+        ['title' => 'Create donor request', 'text' => 'Ask for one donor for a hospital patient.', 'url' => 'request_create.php'],
         ['title' => 'Update inventory', 'text' => 'Record received, expired or corrected blood units.', 'url' => 'inventory.php'],
         ['title' => 'Review reservations', 'text' => 'Approve stock and confirm patient collection.', 'url' => 'reservations.php'],
         ['title' => 'Screen donors', 'text' => 'Review donor health profiles and eligibility.', 'url' => 'donors.php'],
@@ -137,13 +138,13 @@ if ($role === 'donor') {
         "SELECT br.*, u.full_name AS seeker_name, h.name AS hospital_name
          FROM blood_requests br JOIN users u ON u.id = br.seeker_id
          LEFT JOIN hospitals h ON h.id = br.hospital_id
-         WHERE br.hospital_id = ? AND br.source_type = 'Blood Bank'
+        WHERE br.hospital_id = ? OR br.seeker_id = ?
          ORDER BY br.created_at DESC LIMIT 6"
     );
-    $recentStatement->execute([$hospitalId]);
+    $recentStatement->execute([$hospitalId,$userId]);
     $recentRequests = $recentStatement->fetchAll();
-    $panelTitle = 'Hospital blood-bank requests';
-    $panelText = 'Only requests addressed to your verified hospital are shown.';
+    $panelTitle = 'Hospital requests';
+    $panelText = 'Requests addressed to or created by your hospital.';
 } else {
     $activeUsers = (int) $pdo->query("SELECT COUNT(*) FROM users WHERE account_status = 'Active'")->fetchColumn();
     $activeDonors = (int) $pdo->query(
@@ -192,7 +193,7 @@ require __DIR__ . '/includes/header.php';
     <div class="hero-actions">
         <?php if ($role === 'donor'): ?><a class="button button-light" href="requests.php">View Matches</a><a class="button button-white" href="donor_profile.php">My Health Profile</a><?php endif; ?>
         <?php if ($role === 'seeker'): ?><a class="button button-light" href="request_create.php">New Request</a><a class="button button-white" href="search.php">Search Blood</a><?php endif; ?>
-        <?php if ($role === 'hospital'): ?><a class="button button-light" href="inventory.php">Update Stock</a><a class="button button-white" href="reservations.php">Review Reservations</a><?php endif; ?>
+        <?php if ($role === 'hospital'): ?><a class="button button-light" href="request_create.php">New Request</a><a class="button button-white" href="reservations.php">Review Reservations</a><?php endif; ?>
         <?php if ($role === 'admin'): ?><a class="button button-light" href="admin_hospitals.php">Review Staff</a><a class="button button-white" href="admin_users.php">Manage Users</a><?php endif; ?>
     </div>
 </section>
