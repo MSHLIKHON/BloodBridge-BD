@@ -8,7 +8,7 @@ require __DIR__.'/includes/header.php';
 ?>
 <section class="page-heading"><div><span class="eyebrow">BloodBridge BD</span><h1>Services</h1><p>Additional workflows using your existing account.</p></div></section>
 <div class="detail-grid">
-<?php if(in_array(current_user()['role'],['donor','seeker'],true)): ?><section class="content-card"><h2>University clubs</h2><p>Join an approved club, coordinate requests or register a campaign.</p><a class="button button-primary" href="clubs.php">Open Clubs</a></section><?php endif; ?>
+<?php if(in_array(current_user()['role'],['donor','seeker','admin'],true)): ?><section class="content-card"><h2>University clubs</h2><p>Join an approved club, coordinate requests or register a campaign.</p><a class="button button-primary" href="clubs.php">Open Clubs</a></section><?php endif; ?>
 <?php if(in_array(current_user()['role'],['donor','hospital'],true)): ?><section class="content-card"><h2>Hospital donations</h2><p>Request, screen and confirm a direct donation.</p><a class="button button-primary" href="direct_donations.php">Open Donations</a></section><?php endif; ?>
 <?php if (in_array(current_user()['role'],['donor','seeker'],true)): ?>
 <section class="content-card"><h2>My location</h2><p>Division, district, area and optional private nearby matching.</p><a class="button button-primary" href="my_location.php">Manage Location</a></section>
