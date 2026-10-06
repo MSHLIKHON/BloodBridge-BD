@@ -35,7 +35,7 @@ function request_match_action(PDO $pdo, array $actor, int $id, string $action, i
             if($actor['role']==='hospital' || $owner || $r['status']!=='Pending' || !$self['donor_enabled'] || $self['blood_group']!==$r['blood_group']) throw new DomainException('This request is not available for your response.');
             if($action==='interest') {
                 if($r['prescription_status']!=='Reviewed') throw new DomainException('The prescription must be reviewed first.');
-                if(donor_effective_status($self)!=='Eligible') throw new DomainException('Your donor profile is not currently eligible.');
+                if(donor_effective_status($self)!=='Eligible') throw new DomainException(donor_ineligibility_message($self));
                 assert_no_active_donation($pdo,$uid);
             }
             $status=$action==='interest'?'Interested':'Rejected';

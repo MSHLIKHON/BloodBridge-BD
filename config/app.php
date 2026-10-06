@@ -140,6 +140,22 @@ function donor_effective_status(array $donor, ?int $intervalDays = null): string
     return 'Eligible';
 }
 
+function donor_ineligibility_message(array $donor, ?int $intervalDays = null): string
+{
+    $status = donor_effective_status($donor, $intervalDays);
+    if ($status === 'Pending') return 'Your donor profile is awaiting hospital screening.';
+    if ($status === 'Temporarily Unavailable') {
+        $date = next_eligible_date($donor['last_donation_date'] ?? null, $intervalDays);
+        return $date
+            ? 'Your donation waiting period continues until ' . date('d M Y', strtotime($date)) . '.'
+            : 'Your donation waiting period has not finished.';
+    }
+    if ($status === 'Permanently Ineligible') return 'Your screening status does not currently permit donation. Contact a verified hospital.';
+    if (isset($donor['donor_enabled']) && !$donor['donor_enabled']) return 'Enable donation from Health Records before responding.';
+    if (!(bool) ($donor['is_available'] ?? false)) return 'Mark yourself available in My Profile before responding.';
+    return 'Your donor account is not available for this request.';
+}
+
 function donor_status_class(string $status): string
 {
     return match ($status) {

@@ -44,6 +44,8 @@ function bloodbridge_unit_tests(): array
     $check('Pending screening retained',fn()=>donor_effective_status(array_replace($d,['screening_status'=>'Pending']))==='Pending');
     $check('Recent donation deferred',fn()=>donor_effective_status(array_replace($d,['last_donation_date'=>date('Y-m-d')]),$days)==='Temporarily Unavailable');
     $check('Permanent screening restriction retained',fn()=>donor_effective_status(array_replace($d,['screening_status'=>'Permanently Ineligible']))==='Permanently Ineligible');
+    $check('Pending donor receives screening guidance',fn()=>donor_ineligibility_message(array_replace($d,['screening_status'=>'Pending']))==='Your donor profile is awaiting hospital screening.');
+    $check('Recent donor receives waiting date',fn()=>str_contains(donor_ineligibility_message(array_replace($d,['last_donation_date'=>date('Y-m-d')]),$days),'waiting period continues until'));
     $check('Expiry at boundary rejected',function():bool { try { ensure_not_expired(['expires_at'=>date('Y-m-d H:i:s')]);return false; }catch(DomainException $e){return true;} });
     $check('Past expiry rejected',function():bool { try { ensure_not_expired(['expires_at'=>'2000-01-01 00:00:00']);return false; }catch(DomainException $e){return true;} });
     $check('Future expiry allowed',function():bool { ensure_not_expired(['expires_at'=>date('Y-m-d H:i:s',time()+600)]);return true; });
