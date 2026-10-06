@@ -13,6 +13,13 @@ $existingUsers = false;
 try { $existingUsers = (int) db()->query('SELECT COUNT(*) FROM users')->fetchColumn() > 0; } catch (Throwable $exception) {}
 $installed = v100_ready();
 
+// Setup is an installation/upgrade endpoint, not a normal application page.
+// Once the current schema exists, send browser visits to the appropriate
+// entry page while keeping CLI integration tests able to include this file.
+if ($installed && $_SERVER['REQUEST_METHOD'] === 'GET' && PHP_SAPI !== 'cli') {
+    redirect(logged_in() ? 'dashboard.php' : 'login.php');
+}
+
 function add_missing_columns(PDO $pdo, string $table, array $columns): void
 {
     $check = $pdo->prepare(
