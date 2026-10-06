@@ -275,6 +275,11 @@ td small { margin-top: 3px; display: block; color: var(--muted); }
 .review-card > div:first-child > span { color: #344054; font-size: 14px; }
 .review-card small { color: var(--muted); }
 .review-card.compact { padding: 14px; }
+.direct-donation-card { grid-template-columns: minmax(0, 1fr); }
+.direct-donation-summary { min-width: 0; }
+.direct-donation-form { width: 100%; min-width: 0; padding-top: 14px; border-top: 1px solid var(--border); }
+.direct-donation-form textarea { min-height: 92px; }
+.direct-donation-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .review-actions { grid-column: 1 / -1; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .review-actions form { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .review-actions input[type="text"] { min-width: 220px; flex: 1; }
@@ -346,6 +351,7 @@ td small { margin-top: 3px; display: block; color: var(--muted); }
     .application-layout { grid-template-columns: 1fr; }
     .inventory-grid, .filter-grid { grid-template-columns: 1fr; }
     .review-card { grid-template-columns: 1fr; }
+    .direct-donation-actions .button { width: 100%; }
     .review-actions { grid-column: auto; }
     .notification-item { align-items: flex-start; flex-direction: column; }
     .mini-reservation { grid-template-columns: 1fr; }
